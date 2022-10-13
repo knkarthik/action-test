@@ -17,8 +17,6 @@ jobs:
   run-build:
     uses: ./.github/workflows/blank.yml
     secrets: inherit
-    with:
-      APP_SLUG: master
 
   deploy:
     # The type of runner that the job will run on
@@ -29,5 +27,4 @@ jobs:
     steps:
       - name: Run a multi-line script
         run: |
-          echo $APP_SLUG
           echo deploy your project.
