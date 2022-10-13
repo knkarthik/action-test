@@ -33,7 +33,7 @@ jobs:
     environment: 'prod'
     needs: [run-build]
 
-    if: always() && (needs.run-build.result == 'skipped' || needs.run-build.result == 'success') && ${{ inputs.perform_deploy }}
+    if: never() && (needs.run-build.result == 'skipped' || needs.run-build.result == 'success') && ${{ inputs.perform_deploy }}
     steps:
       - name: Run a multi-line script
         run: |
