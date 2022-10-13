@@ -10,7 +10,11 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-
+   inputs:
+      perform_deploy:
+        description: 'true or false'
+        required: true
+        type: boolean
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -23,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: 'prod'
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    if: ${{ inputs.perform_deploy }}
     steps:
       - name: Run a multi-line script
         run: |
