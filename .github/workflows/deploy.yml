@@ -33,9 +33,9 @@ jobs:
     environment: 'prod'
     needs: [run-build]
 
-    if: ${{ needs.*.result == 'skipped' }} && ${{ inputs.perform_deploy }}
+    if: needs.*.result == 'skipped' && ${{ inputs.perform_deploy }}
     steps:
       - name: Run a multi-line script
         run: |
           echo deploy your project.
-          echo ${{ needs.run-build.result }}
+          echo ${{ needs.run-build.result }}, ${{ inputs.perform_deploy }}
