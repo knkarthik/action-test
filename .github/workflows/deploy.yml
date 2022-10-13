@@ -22,7 +22,7 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   run-build:
-#     if: ${{ inputs.perform_deploy }}
+    if: inputs.perform_deploy.options != "deploy"
     uses: ./.github/workflows/blank.yml
     secrets: inherit
 
@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: 'prod'
 
-    if: inputs.perform_deploy.options == 'deploy'
+    if: inputs.perform_deploy.options == "deploy"
     steps:
       - name: Run a multi-line script
         run: |
