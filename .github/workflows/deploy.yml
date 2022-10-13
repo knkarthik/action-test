@@ -12,17 +12,18 @@ on:
   workflow_dispatch:
    inputs:
       perform_deploy:
-        description: 'Deploy'
+        description: 'Check to trigger production deploy'
         required: true
-        default: '' 
-        type: choice
-        options:
-        - deploy
+        type: boolean 
+#         default: '' 
+#         type: choice
+#         options:
+#         - deploy
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
   run-build:
-    if: inputs.perform_deploy != 'deploy'
+    if: inputs.perform_deploy
     uses: ./.github/workflows/blank.yml
     secrets: inherit
 
@@ -31,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: 'prod'
 
-    if: inputs.perform_deploy == 'deploy'
+    if: inputs.perform_deploy
     steps:
       - name: Run a multi-line script
         run: |
