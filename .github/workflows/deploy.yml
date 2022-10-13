@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: 'prod'
     needs: [build]
-    if: ${{ success() && (needs.build.result == 'success' || needs.build.result == 'skipped') && inputs.perform_deploy }} 
+    if: ${{ success() && inputs.perform_deploy }} 
 
 #     if: | 
 #       cancelled() && (needs.build.result == 'success' || needs.build.result == 'skipped') && 
