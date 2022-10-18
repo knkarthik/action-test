@@ -1,4 +1,4 @@
 
 # action-test
-pr 1
+commit 1
 
