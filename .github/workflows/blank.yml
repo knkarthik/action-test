@@ -28,6 +28,10 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: sleep
-        run: sleep 60
+        run: sleep 5
       - name: Run a one-line script
         run: echo Hello, world!
+  call-another:
+    needs: [build]
+    uses: ./.github/workflows/called.yml
+    secrets: inherit
