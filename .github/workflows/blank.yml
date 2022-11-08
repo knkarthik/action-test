@@ -30,7 +30,9 @@ jobs:
       - name: sleep
         run: sleep 5
       - name: Run a one-line script
-        run: echo Hello, world!
+        run: |
+          fs=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }})
+          echo $fs
   call-another:
     needs: [build]
     uses: ./.github/workflows/called.yml
