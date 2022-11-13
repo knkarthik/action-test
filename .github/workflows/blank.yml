@@ -6,6 +6,7 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   pull_request:
+  push:
 ##     branches: [ "main" ]
 
   # Allows you to run this workflow manually from the Actions tab
@@ -23,11 +24,34 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the jobddd
     steps:
+      - name: Dump GitHub
+        run: echo '${{ toJSON(github) }}'
+      - name: Dump env context
+        run: echo '${{ toJSON(env) }}'
+      - name: Dump env vars
+        run: env
+      - name: Dump job context
+        run: echo '${{ toJSON(job) }}'
+      - name: Dump steps context
+        run: echo '${{ toJSON(steps) }}'
+      - name: Dump runner context
+        run: echo '${{ toJSON(runner) }}'
+
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
 
       # Runs a single command using the runners shell
       - name: sleep
-        run: sleep 60
+        run: sleep 5
       - name: Run a one-line script
-        run: echo Hello, world!
+        run: |        
+          fs=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }})
+          echo $fs
+          echo ${{ github.sha }}
+          echo ${{ github.event.pull_request.head.sha }}
+  call-another:
+    needs: [build]
+    uses: ./.github/workflows/called.yml
+    secrets: inherit
