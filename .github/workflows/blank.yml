@@ -28,4 +28,5 @@ jobs:
         with:
           ruby-version: '2.7.5'
           bundler-cache: true
+          bundler: 1.17.3
       - run: bundle list
