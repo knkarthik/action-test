@@ -6,6 +6,7 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   pull_request:
+  push:
 ##     branches: [ "main" ]
 
   # Allows you to run this workflow manually from the Actions tab
@@ -34,5 +35,15 @@ jobs:
           restore-keys: |
             # readme-cache-${{ github.head_ref || github.ref_name }}-${{ hashFiles('**/README.md') }}
             readme-cache-
-      - name: print readme
-        run: cat README.md
+      - name: Dump GitHub
+        run: |
+          echo '${{ toJSON(github) }}'
+          echo '${{ toJSON(github.event) }}'
+          echo 'github.head_ref => ${{ github.head_ref }}'
+          echo 'github.ref_name => ${{ github.ref_name }}'
+      - name: Dump job context
+        run: echo '${{ toJSON(job) }}'
+      - name: Dump steps context
+        run: echo '${{ toJSON(steps) }}'
+      - name: Dump runner context
+        run: echo '${{ toJSON(runner) }}'
