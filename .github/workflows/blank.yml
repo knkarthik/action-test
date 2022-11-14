@@ -31,7 +31,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: README.md
-          key: readme-cache-${{ github.head_ref || github.ref_name }}-${{ hashFiles('**/README.md') }}
+          key: readme-cache-${{ github.head_ref || github.ref_name }}-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: |
             readme-cache-${{ github.head_ref || github.ref_name }}-
             readme-cache-
