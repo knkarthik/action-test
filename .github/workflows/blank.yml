@@ -30,9 +30,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: README.md
-          key: readme-cache-${{ github.ref_name }}-${{ hashFiles('**/README.md') }}
+          key: readme-cache-${{ github.head_ref || github.ref_name }}-${{ hashFiles('**/README.md') }}
           restore-keys: |
-            readme-cache-${{ github.ref_name }}-${{ hashFiles('**/README.md') }}
+            # readme-cache-${{ github.head_ref || github.ref_name }}-${{ hashFiles('**/README.md') }}
             readme-cache-
       - name: print readme
         run: cat README.md
