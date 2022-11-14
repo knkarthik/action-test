@@ -23,10 +23,16 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the jobddd
     steps:
-      - uses: actions/checkout@v3
-      - uses: ruby/setup-ruby@v1
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cache file
+        id: cache_readme
+        uses: actions/cache@v3
         with:
-          ruby-version: '2.7.5'
-          bundler-cache: true
-          bundler: 1.17.3
-      - run: bundle list
+          path: vendor/bundle
+          key: readme-cache-${{ github.ref_name }}-${{ hashFiles('**/README.md') }}
+          restore-keys: |
+            readme-cache-${{ github.ref_name }}-${{ hashFiles('**/README.md') }}
+            readme-cache-
+      - name: print readme
+        run: cat README.md
