@@ -39,7 +39,7 @@ gem 'percy-capybara', '~> 5.0.0'
 gem 'pg', '>= 0.18', '< 2.0' # Use postgresql as the database for Active Record
 gem 'phonelib', require: false
 gem 'puma', '~> 5.6' # Use Puma as the app server
-gem 'pundit', git: 'https://github.com/financeit/pundit'
+gem 'pundit', git: 'https://github.com/financeit/pundit', branch: 'v2.0.1_centah'
 gem 'rails', '~> 6.0.4'
 gem 'redis'
 gem 'request_store'
