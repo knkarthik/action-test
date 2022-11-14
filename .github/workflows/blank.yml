@@ -29,7 +29,7 @@ jobs:
         id: cache_readme
         uses: actions/cache@v3
         with:
-          path: vendor/bundle
+          path: README.md
           key: readme-cache-${{ github.ref_name }}-${{ hashFiles('**/README.md') }}
           restore-keys: |
             readme-cache-${{ github.ref_name }}-${{ hashFiles('**/README.md') }}
