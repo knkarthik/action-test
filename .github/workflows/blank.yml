@@ -23,11 +23,16 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the jobddd
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-
-      # Runs a single command using the runners shell
-      - name: sleep
-        run: sleep 60
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cache file
+        id: cache_readme
+        uses: actions/cache@v3
+        with:
+          path: README.md
+          key: readme-cache-${{ github.head_ref || github.ref_name }}-${{ hashFiles('**/README.md') }}
+          restore-keys: |
+            # readme-cache-${{ github.head_ref || github.ref_name }}-${{ hashFiles('**/README.md') }}
+            readme-cache-
+      - name: print readme
+        run: cat README.md
