@@ -16,6 +16,8 @@ on:
 #   cancel-in-progress: true
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
+env:
+  ENABLE_PERCY: 0
 jobs:
   # This workflow contains a single job called "build"
   build:
@@ -46,11 +48,11 @@ jobs:
         shell: bash {0}
 #         run: echo ::set-output name=push_commit_message::$(git log --format=%B -n 1 HEAD)
         run: |
-          ${{ github.event_name == 'push' }} && echo "ENABLE_PERCY=1" >> $GITHUB_OUTPUT
+          ${{ github.event_name == 'push' }} && echo "ENABLE_PERCY=1" >> $GITHUB_ENV
           ${{ github.event_name == 'pull_request' }} \
             && [[ $(git log --format=%B -n 1 HEAD^2 | grep -o '\[percy\]') == "[percy]" ]] \
-            && echo "ENABLE_PERCY=1" >> $GITHUB_OUTPUT \
-            || echo "ENABLE_PERCY=0" >> $GITHUB_OUTPUT 
+            && echo "ENABLE_PERCY=1" >> $GITHUB_ENV \
+            || echo "ENABLE_PERCY=0" >> $GITHUB_ENV 
   
       - name: print head info and others
         run: |
@@ -58,7 +60,7 @@ jobs:
           echo 'github.head_ref => ${{ github.head_ref }}, head_commit message => ${{ github.event.head_commit.message }}'
           echo 'github.ref_name => ${{ github.ref_name }}, head_commit message => ${{ github.event.head_commit.message }}'
           echo 'head_commit message => ${{ github.event.head_commit.message }}'
-          export PERCY_ENABLE=${{ steps.enable_percy.outputs.ENABLE_PERCY }}
+          export PERCY_ENABLE=${{ env.ENABLE_PERCY }}
           echo "The percy enabled is $PERCY_ENABLE"
 
 #       - name: Dump job context
