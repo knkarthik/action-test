@@ -54,9 +54,8 @@ jobs:
           echo 'github.head_ref => ${{ github.head_ref }}, head_commit message => ${{ github.event.head_commit.message }}'
           echo 'github.ref_name => ${{ github.ref_name }}, head_commit message => ${{ github.event.head_commit.message }}'
           echo 'head_commit message => ${{ github.event.head_commit.message }}'
-          [[ ${{ contains(${{ steps.get_commit_message.outputs.COMMIT_MESSAGE }}, '[percy]') }} ]] || [ ${{ github.ref_name }} == 'master' ] && export PERCY_ENABLE=1
           echo $PERCY_ENABLE
-          echo "The commit message is ${{ steps.get_commit_message.outputs.COMMIT_MESSAGE }}"
+          echo "The commit message is ${{ steps.get_commit_message.outputs.ENABLE_PERCY }}"
 
 #       - name: Dump job context
 #         run: echo '${{ toJSON(job) }}'
