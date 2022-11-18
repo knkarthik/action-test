@@ -45,8 +45,8 @@ jobs:
         id: enable_percy
 #         run: echo ::set-output name=push_commit_message::$(git log --format=%B -n 1 HEAD)
         run: |
-          ${{ github.event_name == 'push' }} && echo "ENABLE_PERCY=1" >> $GITHUB_OUTPUT
-          ${{ github.event_name == 'pull_request' }} && [[ $(git log --format=%B -n 1 HEAD^2 | grep -o "\[percy\]") ]] && echo "ENABLE_PERCY=1" >> $GITHUB_OUTPUT
+          [[ ${{ github.event_name == 'push' }} ]] && echo "ENABLE_PERCY=1" >> $GITHUB_OUTPUT
+          [[ ${{ github.event_name == 'pull_request' }} ]] && [[ $(git log --format=%B -n 1 HEAD^2 | grep -o "\[percy\]") ]] && echo "ENABLE_PERCY=1" >> $GITHUB_OUTPUT
           
       - name: print head info and others
         run: |
@@ -55,7 +55,7 @@ jobs:
           echo 'github.ref_name => ${{ github.ref_name }}, head_commit message => ${{ github.event.head_commit.message }}'
           echo 'head_commit message => ${{ github.event.head_commit.message }}'
           echo $PERCY_ENABLE
-          echo "The commit message is ${{ steps.get_commit_message.outputs.ENABLE_PERCY }}"
+          echo "The commit message is ${{ steps.enable_percy.outputs.ENABLE_PERCY }}"
 
 #       - name: Dump job context
 #         run: echo '${{ toJSON(job) }}'
