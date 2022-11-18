@@ -45,6 +45,9 @@ jobs:
           cat README.md
           echo 'github.head_ref => ${{ github.head_ref }}'
           echo 'github.ref_name => ${{ github.ref_name }}'
+          [[ contains(github.event.head_commit.message, '[percy]') ]] || [ ${{ github.ref_name }} == master ] && export PERCY_ENABLE=1
+          echo $PERCY_ENABLE
+
       - name: Dump job context
         run: echo '${{ toJSON(job) }}'
       - name: Dump steps context
