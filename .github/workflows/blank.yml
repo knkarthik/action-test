@@ -51,8 +51,7 @@ jobs:
           ${{ github.event_name == 'push' }} && echo "ENABLE_PERCY=1" >> $GITHUB_ENV
           ${{ github.event_name == 'pull_request' }} \
             && [[ $(git log --format=%B -n 1 HEAD^2 | grep -o '\[percy\]') == "[percy]" ]] \
-            && echo "ENABLE_PERCY=1" >> $GITHUB_ENV \
-            || echo "ENABLE_PERCY=0" >> $GITHUB_ENV 
+            && echo "ENABLE_PERCY=1" >> $GITHUB_ENV 
       - name: print head info and others
         run: |
           cat README.md
