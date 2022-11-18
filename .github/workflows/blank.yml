@@ -8,8 +8,8 @@ on:
   pull_request:
 #   push:
 ##     branches: [ "main" ]
-
   # Allows you to run this workflow manually from the Actions tab
+  
   workflow_call:
 # concurrency: 
 #   group: ${{ github.head_ref || github.run_id }}
@@ -21,11 +21,12 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
     # Steps represent a sequence of tasks that will be executed as part of the jobddd
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
       - name: Cache file
         id: cache_readme
         uses: actions/cache@v3
@@ -35,23 +36,34 @@ jobs:
           restore-keys: |
             readme-cache-${{ github.head_ref || github.ref_name }}-
             readme-cache-
-      - name: Dump GitHub
+#       - name: Dump GitHub
+#         run: |
+#           echo '${{ toJSON(github) }}'
+#       - name: Dump GitHub event
+#         run: echo '${{ toJSON(github.event) }}'
+      - name: "enable percy"
+        id: enable_percy
+#         run: echo ::set-output name=push_commit_message::$(git log --format=%B -n 1 HEAD)
         run: |
-          echo '${{ toJSON(github) }}'
-      - name: Dump GitHub event
-        run: echo '${{ toJSON(github.event) }}'
+          ${{ github.event_name == 'push' }} && echo "PERCY_ENABLE=1" >> $GITHUB_OUTPUT
+          ${{ github.event_name == 'pull_request' }} \
+            && [[ $(git log --format=%B -n 1 HEAD^2 | grep -o '\[percy\]') == "[percy]" ]] \
+            && echo "PERCY_ENABLE=1" >> $GITHUB_OUTPUT \
+            || echo "PERCY_ENABLE=0" >> $GITHUB_OUTPUT
       - name: print head info and others
+        env: 
+          PERCY_ENABLE: ${{ steps.enable_percy.outputs.ENABLE_PERCY || 0 }}
         run: |
           cat README.md
-          echo 'github.head_ref => ${{ github.head_ref }}'
-          echo 'github.ref_name => ${{ github.ref_name }}'
+          echo 'github.head_ref => ${{ github.head_ref }}, head_commit message => ${{ github.event.head_commit.message }}'
+          echo 'github.ref_name => ${{ github.ref_name }}, head_commit message => ${{ github.event.head_commit.message }}'
           echo 'head_commit message => ${{ github.event.head_commit.message }}'
-          [[ contains(${{ github.ref_name }}, '[percy]') ]] || [ ${{ github.ref_name }} == master ] && export PERCY_ENABLE=1
-          echo $PERCY_ENABLE
+          #export PERCY_ENABLE=${{ steps.enable_percy.outputs.PERCY_ENABLE }}
+          echo "The percy enabled is $PERCY_ENABLE"
 
-      - name: Dump job context
-        run: echo '${{ toJSON(job) }}'
-      - name: Dump steps context
-        run: echo '${{ toJSON(steps) }}'
-      - name: Dump runner context
-        run: echo '${{ toJSON(runner) }}'
+#       - name: Dump job context
+#         run: echo '${{ toJSON(job) }}'
+#       - name: Dump steps context
+#         run: echo '${{ toJSON(steps) }}'
+#       - name: Dump runner context
+#         run: echo '${{ toJSON(runner) }}'
