@@ -56,9 +56,9 @@ jobs:
              echo "ENABLE_PERCY=1" >> $GITHUB_OUTPUT
              echo $(git log --format=%B -n 1 HEAD^2 | grep -o '\[percy\]')
            fi
-           echo "elif"
           else
            echo "ENABLE_PERCY=0" >> $GITHUB_OUTPUT
+           echo "set to 0 now"
           fi
           exit 0
           
