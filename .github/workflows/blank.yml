@@ -58,8 +58,8 @@ jobs:
           echo 'github.head_ref => ${{ github.head_ref }}, head_commit message => ${{ github.event.head_commit.message }}'
           echo 'github.ref_name => ${{ github.ref_name }}, head_commit message => ${{ github.event.head_commit.message }}'
           echo 'head_commit message => ${{ github.event.head_commit.message }}'
-          echo $PERCY_ENABLE
-          echo "The percy enabled is ${{ steps.enable_percy.outputs.ENABLE_PERCY }}"
+          export PERCY_ENABLE=${{ steps.enable_percy.outputs.ENABLE_PERCY }}
+          echo "The percy enabled is $PERCY_ENABLE"
 
 #       - name: Dump job context
 #         run: echo '${{ toJSON(job) }}'
