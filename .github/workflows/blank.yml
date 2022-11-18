@@ -6,7 +6,7 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   pull_request:
-  push:
+#   push:
 ##     branches: [ "main" ]
 
   # Allows you to run this workflow manually from the Actions tab
@@ -31,16 +31,24 @@ jobs:
         uses: actions/cache@v3
         with:
           path: README.md
-          key: readme-cache-${{ github.head_ref || github.ref_name }}-${{ hashFiles('**/README.md') }}
+          key: readme-cache-${{ github.head_ref || github.ref_name }}-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: |
-            # readme-cache-${{ github.head_ref || github.ref_name }}-${{ hashFiles('**/README.md') }}
+            readme-cache-${{ github.head_ref || github.ref_name }}-
             readme-cache-
       - name: Dump GitHub
         run: |
           echo '${{ toJSON(github) }}'
-          echo '${{ toJSON(github.event) }}'
+      - name: Dump GitHub event
+        run: echo '${{ toJSON(github.event) }}'
+      - name: print head info and others
+        run: |
+          cat README.md
           echo 'github.head_ref => ${{ github.head_ref }}'
           echo 'github.ref_name => ${{ github.ref_name }}'
+          echo 'head_commit message => ${{ github.event.head_commit.message }}'
+          [[ contains(${{ github.ref_name }}, '[percy]') ]] || [ ${{ github.ref_name }} == master ] && export PERCY_ENABLE=1
+          echo $PERCY_ENABLE
+
       - name: Dump job context
         run: echo '${{ toJSON(job) }}'
       - name: Dump steps context
