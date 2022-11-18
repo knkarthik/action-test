@@ -45,14 +45,13 @@ jobs:
 #         run: echo '${{ toJSON(github.event) }}'
       - name: "enable percy"
         id: enable_percy
-        shell: bash -l {0}
+        shell: sh +e {0}
 #         run: echo ::set-output name=push_commit_message::$(git log --format=%B -n 1 HEAD)
         run: |
-          set +eo
           ${{ github.event_name == 'push' }} && echo "ENABLE_PERCY=1" >> $GITHUB_ENV
           ${{ github.event_name == 'pull_request' }} \
             && [[ $(git log --format=%B -n 1 HEAD^2 | grep -o '\[percy\]') == "[percy]" ]] \
-            && echo "ENABLE_PERCY=1" >> $GITHUB_ENV 
+            && echo "ENABLE_PERCY=1" >> $GITHUB_ENV
       - name: print head info and others
         run: |
           cat README.md
