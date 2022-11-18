@@ -51,7 +51,7 @@ jobs:
             && echo "PERCY_ENABLE=1" >> $GITHUB_OUTPUT || true
       - name: print head info and others
         env: 
-          PERCY_ENABLE: ${{ steps.enable_percy.outputs.ENABLE_PERCY }}
+          PERCY_ENABLE: ${{ steps.enable_percy.outputs.ENABLE_PERCY || 0 }}
         run: |
           cat README.md
           echo 'github.head_ref => ${{ github.head_ref }}, head_commit message => ${{ github.event.head_commit.message }}'
