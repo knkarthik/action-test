@@ -45,14 +45,14 @@ jobs:
         id: enable_percy
 #         run: echo ::set-output name=push_commit_message::$(git log --format=%B -n 1 HEAD)
         run: |
-          ${{ github.event_name == 'push' }} && echo "PERCY_ENABLE=1" >> $GITHUB_OUTPUT
+          ${{ github.ref_name == 'main' }} && echo "PERCY_ENABLE=1" >> $GITHUB_OUTPUT && exit 0
           ${{ github.event_name == 'pull_request' }} \
             && [[ $(git log --format=%B -n 1 HEAD^2 | grep -o '\[percy\]') == "[percy]" ]] \
             && echo "PERCY_ENABLE=1" >> $GITHUB_OUTPUT \
             || echo "PERCY_ENABLE=0" >> $GITHUB_OUTPUT
       - name: print head info and others
         env: 
-          PERCY_ENABLE: ${{ steps.enable_percy.outputs.ENABLE_PERCY || 0 }}
+          PERCY_ENABLE: ${{ steps.enable_percy.outputs.ENABLE_PERCY }}
         run: |
           cat README.md
           echo 'github.head_ref => ${{ github.head_ref }}, head_commit message => ${{ github.event.head_commit.message }}'
