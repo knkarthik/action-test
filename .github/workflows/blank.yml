@@ -60,7 +60,6 @@ jobs:
           echo 'head_commit message => ${{ github.event.head_commit.message }}'
           #export PERCY_ENABLE=${{ steps.enable_percy.outputs.PERCY_ENABLE }}
           echo "The percy enabled is $PERCY_ENABLE"
-
 #       - name: Dump job context
 #         run: echo '${{ toJSON(job) }}'
 #       - name: Dump steps context
