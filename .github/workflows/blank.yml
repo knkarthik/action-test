@@ -41,25 +41,20 @@ jobs:
 #           echo '${{ toJSON(github) }}'
 #       - name: Dump GitHub event
 #         run: echo '${{ toJSON(github.event) }}'
-      - name: "Get commit message"
-        id: get_commit_message
+      - name: "enable percy"
+        id: enable_percy
 #         run: echo ::set-output name=push_commit_message::$(git log --format=%B -n 1 HEAD)
         run: |
-          ${{ github.event_name == 'push' }} && "COMMIT_MESSAGE=$(git log --format=%B -n 1 HEAD)" >> $GITHUB_OUTPUT
-          if ${{ github.event_name == 'pull_request' }};then
-           MSG=$(git log --format=%B -n 1 HEAD^2)
-           echo 'COMMIT_MESSAGE=$MSG' >> $GITHUB_OUTPUT
-          fi
+          ${{ github.event_name == 'push' }} && echo "ENABLE_PERCY=1" >> $GITHUB_OUTPUT
+          ${{ github.event_name == 'pull_request' }} && [[ $(git log --format=%B -n 1 HEAD^2 | grep -o "\[percy\]") ]] && echo "ENABLE_PERCY=1" >> $GITHUB_OUTPUT
+          
       - name: print head info and others
         run: |
           cat README.md
           echo 'github.head_ref => ${{ github.head_ref }}, head_commit message => ${{ github.event.head_commit.message }}'
-          echo "$(git log --format=%B -n 1 HEAD)"
           echo 'github.ref_name => ${{ github.ref_name }}, head_commit message => ${{ github.event.head_commit.message }}'
-          echo "$(git log --format=%B -n 1 HEAD^2)"
-          MSG=$(git log --format=%B -n 1 HEAD^2)
           echo 'head_commit message => ${{ github.event.head_commit.message }}'
-          [[ ${{ contains('$MSG', '[percy]') }} ]] || [ ${{ github.ref_name }} == 'master' ] && export PERCY_ENABLE=1
+          [[ ${{ contains(${{ steps.get_commit_message.outputs.COMMIT_MESSAGE }}, '[percy]') }} ]] || [ ${{ github.ref_name }} == 'master' ] && export PERCY_ENABLE=1
           echo $PERCY_ENABLE
           echo "The commit message is ${{ steps.get_commit_message.outputs.COMMIT_MESSAGE }}"
 
