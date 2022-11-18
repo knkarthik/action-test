@@ -50,8 +50,8 @@ jobs:
           if ${{ github.event_name == 'push' }};then
            echo "ENABLE_PERCY=1" >> $GITHUB_OUTPUT
           elif ${{ github.event_name == 'pull_request' }};then
-           git log --format=%B -n 1 HEAD^2 | grep -o '\[percy\]'
            echo "git log looks ok"
+           git log --format=%B -n 1 HEAD^2 | grep -o '\[percy\]'
            if [ $? -eq 0 ];then
              echo "ENABLE_PERCY=1" >> $GITHUB_OUTPUT
              echo $(git log --format=%B -n 1 HEAD^2 | grep -o '\[percy\]')
