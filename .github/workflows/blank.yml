@@ -41,6 +41,12 @@ jobs:
           echo '${{ toJSON(github) }}'
       - name: Dump GitHub event
         run: echo '${{ toJSON(github.event) }}'
+      - name: "Get commit message"
+        id: get_commit_message
+#         run: echo ::set-output name=push_commit_message::$(git log --format=%B -n 1 HEAD)
+        run: |
+          echo ${{ github.event_name == 'push' }} && "COMMIT_MESSAGE=$(git log --format=%B -n 1 HEAD)" >> $GITHUB_OUTPUT
+          echo ${{ github.event_name == 'pull_request' }} && "COMMIT_MESSAGE=$(git log --format=%B -n 1 HEAD^)" >> $GITHUB_OUTPUT
       - name: print head info and others
         run: |
           cat README.md
@@ -52,6 +58,7 @@ jobs:
           echo 'head_commit message => ${{ github.event.head_commit.message }}'
           [[ ${{ contains('$MSG', '[percy]') }} ]] || [ ${{ github.ref_name }} == 'master' ] && export PERCY_ENABLE=1
           echo $PERCY_ENABLE
+          echo "The commit message is ${{ steps.get_commit_message.outputs.COMMIT_MESSAGE }}"
 
       - name: Dump job context
         run: echo '${{ toJSON(job) }}'
