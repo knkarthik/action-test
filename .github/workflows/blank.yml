@@ -46,6 +46,7 @@ jobs:
         shell: bash {0}
 #         run: echo ::set-output name=push_commit_message::$(git log --format=%B -n 1 HEAD)
         run: |
+          set +x
           if ${{ github.event_name == 'push' }};then
            echo "ENABLE_PERCY=1" >> $GITHUB_OUTPUT
           elif ${{ github.event_name == 'pull_request' }};then
