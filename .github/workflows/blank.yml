@@ -45,7 +45,7 @@ jobs:
 #         run: echo '${{ toJSON(github.event) }}'
       - name: "enable percy"
         id: enable_percy
-        shell: bash +eo pipefail {0}
+        shell: bash +eo {0}
 #         run: echo ::set-output name=push_commit_message::$(git log --format=%B -n 1 HEAD)
         run: |
           set +xe
