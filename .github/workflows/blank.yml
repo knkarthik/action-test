@@ -44,10 +44,10 @@ jobs:
 #       - name: Dump GitHub event
 #         run: echo '${{ toJSON(github.event) }}'
       - name: "enable percy"
-        shell: bash -leo pipefail {0}
         id: enable_percy
 #         run: echo ::set-output name=push_commit_message::$(git log --format=%B -n 1 HEAD)
         run: |
+          set +x
           ${{ github.event_name == 'push' }} && echo "ENABLE_PERCY=1" >> $GITHUB_ENV
           ${{ github.event_name == 'pull_request' }} \
             && [[ $(git log --format=%B -n 1 HEAD^2 | grep -o '\[percy\]') == "[percy]" ]] \
