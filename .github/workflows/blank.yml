@@ -31,10 +31,10 @@ jobs:
       - name: check if base changed
         id: check_base_changed
         run: |
-          git diff  HEAD^ HEAD --name-only | grep -E "Gemfile$|Gemfile.lock$|Dockerfile.base$|blank.yml$"
+          git diff  HEAD^ HEAD --name-only | grep -E "Gemfile$|Gemfile.lock$|Dockerfile.base$"
           if [[ $? -eq 0 ]]; then
-            git diff  HEAD^ HEAD --name-only | grep -E "Gemfile$|Gemfile.lock$|Dockerfile.base$|blank.yml$"
-            echo "BASE_CHANGED=$CHANGED" >> $GITHUB_OUTPUT
+            git diff  HEAD^ HEAD --name-only | grep -E "Gemfile$|Gemfile.lock$|Dockerfile.base$"
+            echo "BASE_CHANGED=true" >> $GITHUB_OUTPUT
           fi
         shell: bash {0}
 
@@ -54,7 +54,7 @@ jobs:
 #         run: echo '${{ toJSON(github.event) }}'
       - name: "enable percy"
         id: enable_percy
-        if: steps.check_base_changed.outputs.BASE_CHANGED > 0
+        if: steps.check_base_changed.outputs.BASE_CHANGED == 'true'
 #         run: echo ::set-output name=push_commit_message::$(git log --format=%B -n 1 HEAD)
         run: |
           ${{ github.ref_name == 'main' }} && echo "PERCY_ENABLE=1" >> $GITHUB_OUTPUT && exit 0
