@@ -36,7 +36,15 @@ jobs:
             echo "BASE_CHANGED=true" >> $GITHUB_OUTPUT
           fi
         shell: bash {0}
-
+      - name: Cache base files
+        id: cache-base-files
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./Gemfile
+            ./Gemfile.lock
+            ./docker/Dockerfile.base
+          key: base-files-cache-${{ github.head_ref || github.ref_name }}-${{ hashFiles('./Gemfile','./Gemfile.lock', './docker/Dockerfile.base') }}
       - name: Cache file
         id: cache_readme
         uses: actions/cache@v3
@@ -53,7 +61,7 @@ jobs:
 #         run: echo '${{ toJSON(github.event) }}'
       - name: "enable percy"
         id: enable_percy
-        if: steps.check_base_changed.outputs.BASE_CHANGED == 'true'
+        if: ${{ steps.cache-base-files-npm.outputs.cache-hit != 'true' }}
 #         run: echo ::set-output name=push_commit_message::$(git log --format=%B -n 1 HEAD)
         run: |
           ${{ github.ref_name == 'main' }} && echo "PERCY_ENABLE=1" >> $GITHUB_OUTPUT && exit 0
