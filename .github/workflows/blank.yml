@@ -32,7 +32,7 @@ jobs:
         id: check_base_changed
         run: |
           git diff  HEAD^ HEAD --name-only | grep -E "Gemfile$|Gemfile.lock$|Dockerfile.base$"
-          if [[ $? -eq 0 ]]; then
+          if [[ $? -eq 0 ]];then
             echo "BASE_CHANGED=true" >> $GITHUB_OUTPUT
           fi
         shell: bash {0}
