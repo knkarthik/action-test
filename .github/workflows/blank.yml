@@ -61,7 +61,7 @@ jobs:
 #         run: echo '${{ toJSON(github.event) }}'
       - name: "enable percy"
         id: enable_percy
-        if: ${{ steps.cache-base-files-npm.outputs.cache-hit != 'true' }}
+        if: ${{ steps.cache-base-files.outputs.cache-hit != 'true' }}
 #         run: echo ::set-output name=push_commit_message::$(git log --format=%B -n 1 HEAD)
         run: |
           ${{ github.ref_name == 'main' }} && echo "PERCY_ENABLE=1" >> $GITHUB_OUTPUT && exit 0
