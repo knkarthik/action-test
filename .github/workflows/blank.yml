@@ -31,8 +31,9 @@ jobs:
       - name: check if base changed
         id: check_base_changed
         run: |
-          git diff  HEAD^ HEAD --name-only | grep -E "Gemfile$|Gemfile.lock$|Dockerfile.base$"
+          git diff  HEAD^ HEAD --name-only | grep -E "Gemfile$|Gemfile.lock$|Dockerfile.base$|blank.yml$"
           if [[ $? -eq 0 ]]; then
+            git diff  HEAD^ HEAD --name-only | grep -E "Gemfile$|Gemfile.lock$|Dockerfile.base$|blank.yml$"
             echo "BASE_CHANGED=$CHANGED" >> $GITHUB_OUTPUT
           fi
         shell: bash {0}
