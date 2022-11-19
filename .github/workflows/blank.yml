@@ -31,7 +31,7 @@ jobs:
       - name: check if base changed
         id: check_base_changed
         run: |
-          git diff  HEAD^ HEAD --name-only | grep -cE "Gemfile$|Gemfile.lock$|Dockerfile.base$"
+          git diff  HEAD^ HEAD --name-only | grep -cE "Gemfile$|Gemfile.lock$|Dockerfile.base$" || true
           CHANGED=$(git diff  HEAD^ HEAD --name-only | grep -cE "Gemfile$|Gemfile.lock$|Dockerfile.base$")
           echo "BASE_CHANGED=$CHANGED" >> $GITHUB_OUTPUT
       - name: Cache file
