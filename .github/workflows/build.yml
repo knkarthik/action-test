@@ -19,14 +19,16 @@ jobs:
       - name: "[Push] Get commit message"
         if: github.event_name == 'push'
         id: push_get_commit_message
-        run: echo "push_commit_message=$(git log --format=%B -n 1 HEAD)" >> $GITHUB_OUTPUT
+        run: |
+          echo "$(git log --format=%B -n 1 HEAD)"
+          echo "push_commit_message=$(git log --format=%B -n 1 HEAD | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
         # If this workflow was triggered by a pull request (open or synchronize!) then resolve the commit message from HEAD^2
         # It is stored in output steps, to be referenced with ${{ steps.pr_get_commit_message.outputs.pr_commit_message }}
       - name: "[Pull Request] Get commit message"
         if: github.event_name == 'pull_request'
         id: pr_get_commit_message
-        run: echo "pr_commit_message=$(git log --format=%B -n 1 HEAD^2)" >> $GITHUB_OUTPUT
+        run: echo "pr_commit_message=$(git log --format=%B -n 1 HEAD^2 | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
     # Finally we want to make the commit message available to other jobs. This can be done with job-level outputs
     # However as we do not know whether the commit message was set in Push or Pull Request event we need to do some
@@ -49,7 +51,7 @@ jobs:
         if: github.event_name == 'pull_request'
         run: echo '${{ toJSON(github) }}'
       - name: "[commit] print if update base"
-        if: contains(needs.base.outputs.commit_message, 'update base')
+        if: contains(needs.base.outputs.commit_message, '[update base]')
         run: echo 'update base present'
       - name: print head info and others
         run: |
