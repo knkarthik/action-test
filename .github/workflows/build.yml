@@ -30,7 +30,7 @@ jobs:
 
       - name: Show changed files in PR or master branch
         run: |
-          echo "The short SHA is $(git rev-parse --short HEAD)"
+          echo "The short SHA is $(git rev-parse --short ${{ github.event.pull_request.head.sha }})"
           echo "GITHUB_SHA is : $GITHUB_SHA" # for pr this is test merge-commit DO NOT USE THIS TO TAG DOCKER IMAGES!
           echo 'pr base sha is : ${{ github.event.pull_request.base.sha }}' # base commit of PR
           echo 'pr head sha is: ${{ github.event.pull_request.head.sha }}' # Head commit of PR, WON'T change for re-runs!
