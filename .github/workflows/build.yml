@@ -1,4 +1,4 @@
-name: build
+name: show changed files
 
 on:
   pull_request:
@@ -20,7 +20,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 2
+          fetch-depth: 2 #required so that github.event.pull_request.base.sha is availabe for diff check below
         id: checkout
         if: github.event_name == 'pull_request'
 
@@ -30,9 +30,10 @@ jobs:
 
       - name: Show changed files in PR or master branch
         run: |
-          echo "GITHUB_SHA is : $GITHUB_SHA"
-          echo 'pr base sha is : ${{ github.event.pull_request.base.sha }}'
-          echo 'pr head sha is: ${{ github.event.pull_request.head.sha }}'
+          echo "The short SHA is $(git rev-parse --short HEAD)"
+          echo "GITHUB_SHA is : $GITHUB_SHA" # for pr this is test merge-commit DO NOT USE THIS TO TAG DOCKER IMAGES!
+          echo 'pr base sha is : ${{ github.event.pull_request.base.sha }}' # base commit of PR
+          echo 'pr head sha is: ${{ github.event.pull_request.head.sha }}' # Head commit of PR, WON'T change for re-runs!
           echo 'before and after is: ${{ github.event.before }} ${{ github.event.after }}'
           if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
             git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > changed_files.txt
