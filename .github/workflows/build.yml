@@ -41,14 +41,14 @@ jobs:
           fi
         shell: bash
 
-      # - name: Set GITHUB_OUTPUT
-      #   run: |
-      #     changed_files=$(cat changed_files.txt)
-      #     if [[ $changed_files =~ Gemfile\.lock || $changed_files =~ yarn\.lock || $changed_files =~ Gemfile ]]; then
-      #       echo "true" > $GITHUB_OUTPUT
-      #     else
-      #       echo "false" > $GITHUB_OUTPUT
-      #     fi
+      - name: Set GITHUB_OUTPUT
+        run: |
+          changed_files=$(cat changed_files.txt)
+          if [[ $changed_files =~ Gemfile\.lock || $changed_files =~ yarn\.lock || $changed_files =~ Gemfile || $chnaged_files =~ README.md ]]; then
+            echo "BASE_CHANGED=true" > $GITHUB_OUTPUT
+          else
+            echo "BASE_CHANGED=false" > $GITHUB_OUTPUT
+          fi
       
       - name: Print
         run: |
