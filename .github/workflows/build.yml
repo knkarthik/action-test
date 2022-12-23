@@ -39,6 +39,7 @@ jobs:
           elif [ "$GITHUB_EVENT_NAME" == "push" ]; then
             git diff --name-only ${{ github.event.before }} ${{ github.event.after }} > changed_files.txt
           fi
+          cat changed_files.txt
         shell: bash
 
       - name: Set GITHUB_OUTPUT
