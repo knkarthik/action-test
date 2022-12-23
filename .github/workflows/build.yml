@@ -33,7 +33,7 @@ jobs:
           echo "GITHUB_SHA is : $GITHUB_SHA"
           echo 'pr base sha is : ${{ github.event.pull_request.base.sha }}'
           echo 'pr head sha is: ${{ github.event.pull_request.head.sha }}'
-          echo 'before and after is: ${{ github.event.before }} ${{ github.event.after }}''
+          echo 'before and after is: ${{ github.event.before }} ${{ github.event.after }}'
           if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
             git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > changed_files.txt
           elif [ "$GITHUB_EVENT_NAME" == "push" ]; then
