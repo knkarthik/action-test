@@ -1,10 +1,10 @@
-name: build
+name: show changed files
 
 on:
   pull_request:
   push:
     branches:
-      - master
+      - main
 
 defaults:
   run:
@@ -20,7 +20,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 2 #required so that github.event.pull_request.base.sha is availabe for diff check below
         id: checkout
         if: github.event_name == 'pull_request'
 
@@ -28,26 +28,35 @@ jobs:
         uses: actions/checkout@v3
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
 
-      # - name: Show changed files in PR or master branch
-      #   run: |
-      #     if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
-      #       git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > changed_files.txt
-      #     elif [ "$GITHUB_EVENT_NAME" == "push" ]; then
-      #       git diff --name-only ${{ github.event.before }} ${{ github.event.after }} > changed_files.txt
-      #     fi
-      #   shell: bash
+      - name: Show changed files in PR or master branch
+        run: |
+          echo "The short SHA is $(git rev-parse --short ${{ github.event.pull_request.head.sha || github.sha }})"
+          echo "GITHUB_SHA is : $GITHUB_SHA" # for pr this is test merge-commit DO NOT USE THIS TO TAG DOCKER IMAGES!
+          echo 'pr base sha is : ${{ github.event.pull_request.base.sha }}' # base commit of PR
+          echo 'pr head sha is: ${{ github.event.pull_request.head.sha }}' # Head commit of PR, WON'T change for re-runs!
+          echo 'before and after is: ${{ github.event.before }} ${{ github.event.after }}'
+          if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
+            git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > changed_files.txt
+          elif [ "$GITHUB_EVENT_NAME" == "push" ]; then
+            git diff --name-only ${{ github.event.before }} ${{ github.event.after }} > changed_files.txt
+          fi
+          cat changed_files.txt
+        shell: bash
 
-      # - name: Set GITHUB_OUTPUT
-      #   run: |
-      #     changed_files=$(cat changed_files.txt)
-      #     if [[ $changed_files =~ Gemfile\.lock || $changed_files =~ yarn\.lock || $changed_files =~ Gemfile ]]; then
-      #       echo "true" > $GITHUB_OUTPUT
-      #     else
-      #       echo "false" > $GITHUB_OUTPUT
-      #     fi
+      - name: Set GITHUB_OUTPUT
+        id: github_output
+        run: |
+          changed_files=$(cat changed_files.txt)
+          if [[ $changed_files =~ Gemfile\.lock || $changed_files =~ yarn\.lock || $changed_files =~ Gemfile || $changed_files =~ README.md ]]; then
+            echo "BASE_CHANGED=true" > $GITHUB_OUTPUT
+          else
+            echo "BASE_CHANGED=false" > $GITHUB_OUTPUT
+          fi
       
       - name: Print
+        if: steps.github_output.outputs.BASE_CHANGED == 'true'
         run: |
+          echo "GITHUB_OUTPUT: ${{ steps.github_output.outputs.BASE_CHANGED }}"
           echo 'github.head_ref => ${{ github.head_ref }}, head_commit message => ${{ github.event.head_commit.message }}'
           echo 'github.ref_name => ${{ github.ref_name }}, head_commit message => ${{ github.event.head_commit.message }}'
           echo 'head_commit message => ${{ github.event.head_commit.message }}'
