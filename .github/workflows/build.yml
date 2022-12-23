@@ -4,7 +4,7 @@ on:
   pull_request:
   push:
     branches:
-      - master
+      - main
 
 defaults:
   run:
@@ -19,8 +19,8 @@ jobs:
         run: echo '${{ toJSON(github) }}'
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
+        # with:
+        #   ref: ${{ github.event.pull_request.head.sha }}
         id: checkout
         if: github.event_name == 'pull_request'
 
@@ -28,14 +28,18 @@ jobs:
         uses: actions/checkout@v3
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
 
-      # - name: Show changed files in PR or master branch
-      #   run: |
-      #     if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
-      #       git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > changed_files.txt
-      #     elif [ "$GITHUB_EVENT_NAME" == "push" ]; then
-      #       git diff --name-only ${{ github.event.before }} ${{ github.event.after }} > changed_files.txt
-      #     fi
-      #   shell: bash
+      - name: Show changed files in PR or master branch
+        run: |
+          echo "GITHUB_SHA is : $GITHUB_SHA"
+          echo 'pr base sha is : ${{ github.event.pull_request.base.sha }}'
+          echo 'pr head sha is: ${{ github.event.pull_request.head.sha }}'
+          echo 'before and after is: ${{ github.event.before }} ${{ github.event.after }}''
+          if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
+            git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > changed_files.txt
+          elif [ "$GITHUB_EVENT_NAME" == "push" ]; then
+            git diff --name-only ${{ github.event.before }} ${{ github.event.after }} > changed_files.txt
+          fi
+        shell: bash
 
       # - name: Set GITHUB_OUTPUT
       #   run: |
