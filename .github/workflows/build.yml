@@ -42,6 +42,7 @@ jobs:
         shell: bash
 
       - name: Set GITHUB_OUTPUT
+        id: github_output
         run: |
           changed_files=$(cat changed_files.txt)
           if [[ $changed_files =~ Gemfile\.lock || $changed_files =~ yarn\.lock || $changed_files =~ Gemfile || $chnaged_files =~ README.md ]]; then
@@ -52,7 +53,7 @@ jobs:
       
       - name: Print
         run: |
-          echo "$GITHUB_OUTPUT"
+          echo "GITHUB_OUTPUT: ${{ steps.github_output.outputs.BASE_CHANGED }}"
           echo 'github.head_ref => ${{ github.head_ref }}, head_commit message => ${{ github.event.head_commit.message }}'
           echo 'github.ref_name => ${{ github.ref_name }}, head_commit message => ${{ github.event.head_commit.message }}'
           echo 'head_commit message => ${{ github.event.head_commit.message }}'
