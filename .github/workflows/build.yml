@@ -23,11 +23,11 @@ jobs:
         with:
           fetch-depth: 2 #required so that github.event.pull_request.base.sha is availabe for diff check below
         id: checkout
-        if: github.event_name == 'pull_request'
+        # if: github.event_name == 'pull_request'
 
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      # - name: Checkout repository
+      #   uses: actions/checkout@v3
+      #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
       - name: Show changed files in PR or master branch
         run: |
