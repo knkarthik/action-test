@@ -45,7 +45,7 @@ jobs:
         id: github_output
         run: |
           changed_files=$(cat changed_files.txt)
-          if [[ $changed_files =~ Gemfile\.lock || $changed_files =~ yarn\.lock || $changed_files =~ Gemfile || $chnaged_files =~ README.md ]]; then
+          if [[ $changed_files =~ Gemfile\.lock || $changed_files =~ yarn\.lock || $changed_files =~ Gemfile || $changed_files =~ README.md ]]; then
             echo "BASE_CHANGED=true" > $GITHUB_OUTPUT
           else
             echo "BASE_CHANGED=false" > $GITHUB_OUTPUT
