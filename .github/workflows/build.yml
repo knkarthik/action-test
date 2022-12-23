@@ -28,23 +28,23 @@ jobs:
         uses: actions/checkout@v3
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
 
-      - name: Show changed files in PR or master branch
-        run: |
-          if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
-            git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > changed_files.txt
-          elif [ "$GITHUB_EVENT_NAME" == "push" ]; then
-            git diff --name-only ${{ github.event.before }} ${{ github.event.after }} > changed_files.txt
-          fi
-        shell: bash
+      # - name: Show changed files in PR or master branch
+      #   run: |
+      #     if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
+      #       git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > changed_files.txt
+      #     elif [ "$GITHUB_EVENT_NAME" == "push" ]; then
+      #       git diff --name-only ${{ github.event.before }} ${{ github.event.after }} > changed_files.txt
+      #     fi
+      #   shell: bash
 
-      - name: Set GITHUB_OUTPUT
-        run: |
-          changed_files=$(cat changed_files.txt)
-          if [[ $changed_files =~ Gemfile\.lock || $changed_files =~ yarn\.lock || $changed_files =~ Gemfile ]]; then
-            echo "true" > $GITHUB_OUTPUT
-          else
-            echo "false" > $GITHUB_OUTPUT
-          fi
+      # - name: Set GITHUB_OUTPUT
+      #   run: |
+      #     changed_files=$(cat changed_files.txt)
+      #     if [[ $changed_files =~ Gemfile\.lock || $changed_files =~ yarn\.lock || $changed_files =~ Gemfile ]]; then
+      #       echo "true" > $GITHUB_OUTPUT
+      #     else
+      #       echo "false" > $GITHUB_OUTPUT
+      #     fi
       - name: Print
         run: |
           echo 'github.head_ref => ${{ github.head_ref }}, head_commit message => ${{ github.event.head_commit.message }}'
