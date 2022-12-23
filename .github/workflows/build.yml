@@ -37,8 +37,8 @@ jobs:
           echo 'before and after is: ${{ github.event.before }} ${{ github.event.after }}'
           if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
             git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > changed_files.txt
-          elif [ "$GITHUB_EVENT_NAME" == "push" ]; then
-            git diff --name-only ${{ github.event.before }} ${{ github.event.after }} > changed_files.txt
+          # elif [ "$GITHUB_EVENT_NAME" == "push" ]; then
+          #   git diff --name-only ${{ github.event.before }} ${{ github.event.after }} > changed_files.txt
           fi
           cat changed_files.txt
         shell: bash
