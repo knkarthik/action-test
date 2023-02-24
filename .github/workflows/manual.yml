@@ -18,6 +18,15 @@ jobs:
           echo ${{ steps.relase-info.outputs.RELEASE_HTML_URL }}
           issue_title="New external-secrets release: ${{ steps.relase-info.outputs.RELEASE_TAG }}"
           issue_body="A new version of external-secrets has been released."
+          issue_body=$(cat <<EOF
+            A new version of external-secrets has been released on ${{ steps.relase-info.outputs.RELEASE_TAG }}.
+
+            Release information:
+            - Tag: ${{ steps.relase-info.outputs.RELEASE_TAG }}
+            - URL: ${{ steps.relase-info.outputs.RELEASE_TAG }}
+            - Body: ${{ steps.relase-info.outputs.RELEASE_TAG }}
+            EOF
+                      )
           curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                -d '{"title": "'"$issue_title"'","body":"'"$issue_body"'"}' \
                -X POST "https://api.github.com/repos/knkarthik/action-test/issues"
