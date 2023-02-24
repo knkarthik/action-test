@@ -16,6 +16,7 @@ jobs:
           latest_release=$(curl --silent "https://api.github.com/repos/external-secrets/external-secrets/releases/latest")
           export RELEASE_TAG=$(echo ${latest_release} | jq -r .tag_name)
           echo "RELEASE_TAG=$(echo ${latest_release} | jq -r .tag_name)" >> $GITHUB_OUTPUT
+          echo "RELEASE_HTML_URL=$(echo ${latest_release} | jq -r .html_url)" >> $GITHUB_OUTPUT
           export RELEASE_HTML_URL=$(echo ${latest_release} | jq -r .html_url)
           export RELEASE_PUBLISHED_AT=$(echo ${latest_release} | jq -r .published_at)
           export RELEASE_BODY=$(echo ${latest_release} | jq -r .body)
@@ -33,5 +34,5 @@ jobs:
           EOF
                     )
           curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-               -d '{"title":"${issue_title}","body":"${{ env.RELEASE_HTML_URL }}"}' \
+               -d '{"title":$issue_title,"body":"${{ env.RELEASE_HTML_URL }}"}' \
                -X POST "https://api.github.com/repos/knkarthik/action-test/issues"
