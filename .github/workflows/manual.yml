@@ -31,5 +31,5 @@ jobs:
           EOF
                     )
           curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-               -d '{"title":"'"${issue_title}"'","body":"'"${issue_body}"'"}' \
+               -d '{"title":"${issue_title}","body":"${{ env.RELEASE_HTML_URL }}"}' \
                -X POST "https://api.github.com/repos/knkarthik/action-test/issues"
