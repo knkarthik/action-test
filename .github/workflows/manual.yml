@@ -18,6 +18,12 @@ jobs:
           issue_title="New external-secrets release: ${{ steps.relase-info.outputs.RELEASE_TAG }}"
           issue_body="[${{ steps.relase-info.outputs.RELEASE_TAG }}](${{ steps.relase-info.outputs.RELEASE_HTML_URL }}) has been released on ${{ steps.relase-info.outputs.RELEASE_PUBLISHED_AT }}."
           label="external-secret-${{ steps.relase-info.outputs.RELEASE_TAG }}"
-          curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-               -d '{"title": "'"$issue_title"'","body":"'"$issue_body"'","assignees":["knkarthik"],"labels":["'"$label"'"]}' \
-               -X POST "https://api.github.com/repos/knkarthik/action-test/issues"
+          #curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          #     -d '{"title": "'"$issue_title"'","body":"'"$issue_body"'","assignees":["knkarthik"],"labels":["'"$label"'"]}' \
+          #     -X POST "https://api.github.com/repos/knkarthik/action-test/issues"
+          gh auth login --with-token < ${{ secrets.GITHUB_TOKEN }}
+          gh issue create \
+            --title $issue_title \
+            --body $issue_body \
+            --label $label \
+            --assignee "knkarthik"
