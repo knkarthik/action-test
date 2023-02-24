@@ -10,8 +10,6 @@ jobs:
       RELEASE_PUBLISHED_AT: ""
       RELEASE_BODY: ""
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
       - name: Get Latest Release Info
         run: |
           latest_release=$(curl --silent "https://api.github.com/repos/external-secrets/external-secrets/releases/latest")
@@ -34,9 +32,4 @@ jobs:
                     )
           curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                -d '{"title":"'"${issue_title}"'","body":"'"${issue_body}"'"}' \
-               -X POST "https://api.github.com/repos/external-secrets/external-secrets/issues"
-      - name: Set Issue URL
-        if: success()
-        run: |
-          issue_url=$(curl --silent "https://api.github.com/repos/external-secrets/external-secrets/issues?q=is:open+is:issue+label:enhancement+in:title+New+external-secrets+release:+${{ env.RELEASE_TAG }}" | jq -r '.[].html_url')
-          echo "Issue URL: $issue_url"
+               -X POST "https://api.github.com/repos/knkarthik/action-test/issues"
