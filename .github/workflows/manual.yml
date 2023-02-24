@@ -20,7 +20,8 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           commit-message: "Update external-secrets chart with new image tag"
-          branch: "update-external-secrets-chart-${{ github.sha }}"
+          branch: "update-external-secrets-chart-${{ steps.get_release.outputs.tag_name }}"
+          branch-suffix: timestamp
           delete-branch: true
           title: "Update external-secrets chart with new image tag"
           body: |
