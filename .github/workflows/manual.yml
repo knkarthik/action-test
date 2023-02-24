@@ -23,15 +23,15 @@ jobs:
         run: |
           issue_title="New external-secrets release: ${{ env.RELEASE_TAG }}"
           issue_body=$(cat <<EOF
-A new version of external-secrets has been released.
+          A new version of external-secrets has been released.
 
-Release information:
-- Tag: ${{ env.RELEASE_TAG }}
-- URL: ${{ env.RELEASE_HTML_URL }}
-- Date: ${{ env.RELEASE_PUBLISHED_AT }}
-- Body: ${{ env.RELEASE_BODY }}
-EOF
-          )
+          Release information:
+          - Tag: ${{ env.RELEASE_TAG }}
+          - URL: ${{ env.RELEASE_HTML_URL }}
+          - Date: ${{ env.RELEASE_PUBLISHED_AT }}
+          - Body: ${{ env.RELEASE_BODY }}
+          EOF
+                    )
           curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                -d '{"title":"'"${issue_title}"'","body":"'"${issue_body}"'"}' \
                -X POST "https://api.github.com/repos/external-secrets/external-secrets/issues"
