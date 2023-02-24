@@ -25,7 +25,7 @@ jobs:
             "https://api.github.com/repos/knkarthik/action-test/issues?labels=$label")
           echo $exists
           jq --version
-          exists=$(echo $exists | jq -r length)
+          exists=$(echo $exists | jq -r 'length')
           [[ $exists -eq 0 ]] && \  
           curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                -d '{"title": "'"$issue_title"'","body":"'"$issue_body"'","assignees":["knkarthik"],"labels":["'"$label"'"]}' \
