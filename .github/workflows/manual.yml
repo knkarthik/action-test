@@ -11,6 +11,7 @@ jobs:
       RELEASE_BODY: ""
     steps:
       - name: Get Latest Release Info
+        id: relase-info
         run: |
           latest_release=$(curl --silent "https://api.github.com/repos/external-secrets/external-secrets/releases/latest")
           export RELEASE_TAG=$(echo ${latest_release} | jq -r .tag_name)
@@ -20,7 +21,7 @@ jobs:
           export RELEASE_BODY=$(echo ${latest_release} | jq -r .body)
       - name: Create Issue
         run: |
-          issue_title="New external-secrets release: ${{ env.RELEASE_TAG }}"
+          issue_title="New external-secrets release: ${{ steps.relase-info.outputs.RELEASE_TAG }}"
           issue_body=$(cat <<EOF
           A new version of external-secrets has been released.
 
