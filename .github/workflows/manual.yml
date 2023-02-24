@@ -22,11 +22,10 @@ jobs:
             A new version of external-secrets has been released on ${{ steps.relase-info.outputs.RELEASE_TAG }}.
 
             Release information:
-            - Tag: ${{ steps.relase-info.outputs.RELEASE_TAG }}
-            - URL: ${{ steps.relase-info.outputs.RELEASE_TAG }}
-            - Body: ${{ steps.relase-info.outputs.RELEASE_TAG }}
-            EOF
-                      )
+              - Tag: ${{ steps.relase-info.outputs.RELEASE_TAG }}
+              - URL: ${{ steps.relase-info.outputs.RELEASE_HTML_URL }}
+              - Body: ${{ steps.relase-info.outputs.RELEASE_BODY }}
+            EOF)
           curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                -d '{"title": "'"$issue_title"'","body":"'"$issue_body"'"}' \
                -X POST "https://api.github.com/repos/knkarthik/action-test/issues"
