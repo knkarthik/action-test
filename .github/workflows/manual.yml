@@ -19,5 +19,5 @@ jobs:
           issue_title="New external-secrets release: ${{ steps.relase-info.outputs.RELEASE_TAG }}"
           issue_body="A new version of external-secrets has been released."
           curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-               -d '{"title":$issue_title,"body":$issue_body}' \
+               -d "{\"title\":$issue_title,\"body\":$issue_body}" \
                -X POST "https://api.github.com/repos/knkarthik/action-test/issues"
