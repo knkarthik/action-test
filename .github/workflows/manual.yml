@@ -1,0 +1,38 @@
+name: Create Pull Request on New Release
+on:
+  workflow_dispatch:
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Get Latest Release Info
+        id: get_release
+        run: |
+          latest_release=$(curl --silent "https://api.github.com/repos/external-secrets/external-secrets/releases/latest")
+          echo "::set-output name=tag_name::$(echo ${latest_release} | jq -r .tag_name)"
+          echo "::set-output name=html_url::$(echo ${latest_release} | jq -r .html_url)"
+          echo "::set-output name=published_at::$(echo ${latest_release} | jq -r .published_at)"
+          echo "::set-output name=body::$(echo ${latest_release} | jq -r .body)"
+      - name: Create Pull Request
+        id: create_pr
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: "Update external-secrets chart with new image tag"
+          branch: "dependabot/update-external-secrets-chart-${{ github.sha }}"
+          delete-branch: true
+          title: "Update external-secrets chart with new image tag"
+          body: |
+            This pull request updates the external-secrets chart to use the latest image tag from the external-secrets repository.
+
+            Latest release info:
+            - Tag: ${{ steps.get_release.outputs.tag_name }}
+            - URL: ${{ steps.get_release.outputs.html_url }}
+            - Date: ${{ steps.get_release.outputs.published_at }}
+            - Body: ${{ steps.get_release.outputs.body }}
+          labels: "dependabot"
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set PR URL
+        if: ${{ steps.create_pr.outputs.pull-request-number != '' }}
+        run: echo "PR URL: ${{ steps.create_pr.outputs.pull-request-url }}"
