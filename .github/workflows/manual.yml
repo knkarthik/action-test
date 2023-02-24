@@ -20,7 +20,7 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           commit-message: "Update external-secrets chart with new image tag"
-          branch: "dependabot/update-external-secrets-chart-${{ github.sha }}"
+          branch: "update-external-secrets-chart-${{ github.sha }}"
           delete-branch: true
           title: "Update external-secrets chart with new image tag"
           body: |
@@ -31,7 +31,6 @@ jobs:
             - URL: ${{ steps.get_release.outputs.html_url }}
             - Date: ${{ steps.get_release.outputs.published_at }}
             - Body: ${{ steps.get_release.outputs.body }}
-          labels: "dependabot"
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Set PR URL
         if: ${{ steps.create_pr.outputs.pull-request-number != '' }}
