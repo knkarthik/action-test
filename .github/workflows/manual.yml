@@ -22,7 +22,9 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"\
             -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/repos/knkarthik/action-test/issues?labels=$label" | jq length)
+            "https://api.github.com/repos/knkarthik/action-test/issues?labels=$label")
+          echo $exists
+          exists=$(echo $exists | jq length)
           [[ $exists -eq 0 ]] && \  
           curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                -d '{"title": "'"$issue_title"'","body":"'"$issue_body"'","assignees":["knkarthik"],"labels":["'"$label"'"]}' \
