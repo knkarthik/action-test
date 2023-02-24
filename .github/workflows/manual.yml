@@ -35,4 +35,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Set PR URL
         if: ${{ steps.create_pr.outputs.pull-request-number != '' }}
-        run: echo "PR URL: ${{ steps.create_pr.outputs.pull-request-url }}"
+        run: echo "PR URL - ${{ steps.create_pr.outputs.pull-request-url }}"
