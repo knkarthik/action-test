@@ -1,0 +1,101 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  pull_request:
+  
+#   push:
+##     branches: [ "main" ]
+  # Allows you to run this workflow manually from the Actions tab
+  
+  workflow_call:
+# concurrency: 
+#   group: ${{ github.head_ref || github.run_id }}
+#   cancel-in-progress: true
+defaults:
+  run:
+   shell: bash -l {0}
+   
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
+
+  test:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    needs: [build]
+#     env:
+#       TAG: ${{ needs.base.outputs.TAG }}
+    # Steps represent a sequence of tasks that will be executed as part of the jobddd
+    steps:
+      - name: Dump GitHub
+        run: echo '${{ toJSON(github) }}'
+      - name: check if base changed
+        id: check_base_changed
+        if: contains(needs.base.outputs.commit_message, 'update base')
+        run: |
+          cat README.md
+          echo 'github.head_ref => ${{ github.head_ref }}, head_commit message => ${{ github.event.head_commit.message }}'
+          echo 'github.ref_name => ${{ github.ref_name }}, head_commit message => ${{ github.event.head_commit.message }}'
+          echo 'head_commit message => ${{ github.event.head_commit.message }}'
+
+          git diff  HEAD^ HEAD --name-only | grep -E "Gemfile$|Gemfile.lock$|Dockerfile.base$"
+          if [[ $? -eq 0 ]];then
+            echo "BASE_CHANGED=true" >> $GITHUB_OUTPUT
+          fi
+        shell: bash {0}
+      - name: Cache base files
+        id: cache-base-files
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./Gemfile
+            ./Gemfile.lock
+            ./docker/Dockerfile.base
+          key: base-files-cache-${{ github.head_ref || github.ref_name }}-${{ hashFiles('./Gemfile','./Gemfile.lock', './docker/Dockerfile.base') }}
+      - name: Cache file
+        id: cache_readme
+        uses: actions/cache@v3
+        with:
+          path: README.md
+          key: readme-cache-${{ github.head_ref || github.ref_name }}-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            readme-cache-${{ github.head_ref || github.ref_name }}-
+            readme-cache-
+#       - name: Dump GitHub
+#         run: |
+#           echo '${{ toJSON(github) }}'
+#       - name: Dump GitHub event
+#         run: echo '${{ toJSON(github.event) }}'
+      - name: "enable percy"
+        id: enable_percy
+        if: ${{ steps.cache-base-files.outputs.cache-hit != 'true' }}
+#         run: echo ::set-output name=push_commit_message::$(git log --format=%B -n 1 HEAD)
+        run: |
+          ${{ github.ref_name == 'main' }} && echo "PERCY_ENABLE=1" >> $GITHUB_OUTPUT && exit 0
+          ${{ github.event_name == 'pull_request' }} \
+            && [[ $(git log --format=%B -n 1 HEAD^2 | grep -o '\[percy\]') == "[percy]" ]] \
+            && echo "PERCY_ENABLE=1" >> $GITHUB_OUTPUT \
+            || echo "PERCY_ENABLE=0" >> $GITHUB_OUTPUT
+      - name: print head info and others
+        env: 
+          PERCY_ENABLE: ${{ steps.enable_percy.outputs.PERCY_ENABLE }}
+        run: |
+          cat README.md
+          echo 'github.head_ref => ${{ github.head_ref }}, head_commit message => ${{ github.event.head_commit.message }}'
+          echo 'github.ref_name => ${{ github.ref_name }}, head_commit message => ${{ github.event.head_commit.message }}'
+          echo 'head_commit message => ${{ github.event.head_commit.message }}'
+          #export PERCY_ENABLE=${{ steps.enable_percy.outputs.PERCY_ENABLE }}
+          echo "The percy enabled is $PERCY_ENABLE"
+#       - name: Dump job context
+#         run: echo '${{ toJSON(job) }}'
+#       - name: Dump steps context
+#         run: echo '${{ toJSON(steps) }}'
+#       - name: Dump runner context
+#         run: echo '${{ toJSON(runner) }}'

@@ -7,6 +7,7 @@ GIT
       jsonapi-resources (~> 0.9)
       pundit (>= 1.0.0, < 3.0.0)
 
+
 GIT
   remote: https://github.com/financeit/jsonapi-resources
   revision: 786ae81fa53c3436e0e94db3da4bc69fafc7800d

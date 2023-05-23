@@ -1,0 +1,31 @@
+name: Create Issue on New Release
+on:
+  workflow_dispatch:
+jobs:
+  create-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Latest Release Info
+        id: relase-info
+        run: |
+          latest_release=$(curl --silent "https://api.github.com/repos/external-secrets/external-secrets/releases/latest")
+          echo "RELEASE_TAG=$(echo ${latest_release} | jq -r .tag_name)" >> $GITHUB_OUTPUT
+          echo "RELEASE_HTML_URL=$(echo ${latest_release} | jq -r .html_url)" >> $GITHUB_OUTPUT
+          echo "RELEASE_PUBLISHED_AT=$(echo ${latest_release} | jq -r .published_at)" >> $GITHUB_OUTPUT
+          echo "RELEASE_BODY=$(echo ${latest_release} | jq -r .body)" >> $GITHUB_OUTPUT
+      - name: Create Issue
+        run: |
+          issue_title="New external-secrets release: ${{ steps.relase-info.outputs.RELEASE_TAG }}"
+          issue_body="[${{ steps.relase-info.outputs.RELEASE_TAG }}](${{ steps.relase-info.outputs.RELEASE_HTML_URL }}) has been released on ${{ steps.relase-info.outputs.RELEASE_PUBLISHED_AT }}."
+          label="external-secret-${{ steps.relase-info.outputs.RELEASE_TAG }}"
+          exists=$(curl -s \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"\
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/knkarthik/action-test/issues?labels=$label")
+          echo $exists
+          exists=$(echo $exists | jq -r 'length')
+          jq --version
+          [[ $exists -eq 0 ]] && curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+               -d '{"title": "'"$issue_title"'","body":"'"$issue_body"'","assignees":["knkarthik"],"labels":["'"$label"'"]}' \
+               -X POST "https://api.github.com/repos/knkarthik/action-test/issues" || true
