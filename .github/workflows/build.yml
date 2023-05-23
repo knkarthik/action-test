@@ -32,7 +32,7 @@ jobs:
       #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
       - name: Show changed files in PR or master branch
-        if: github.event_name == pull_request
+        if: ${{ github.event_name == 'pull_request' }}
         run: |
           echo "The short SHA is $(git rev-parse --short ${{ github.event.pull_request.head.sha || github.sha }})"
           echo "GITHUB_SHA is : $GITHUB_SHA" # for pr this is test merge-commit DO NOT USE THIS TO TAG DOCKER IMAGES!
