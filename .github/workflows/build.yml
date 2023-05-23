@@ -4,8 +4,8 @@ on:
   pull_request:
     types:
       - closed
-  schedule:
-    - cron: '*/5 * * * *' #Everyday at 21:02
+#   schedule:
+#     - cron: '*/5 * * * *' #Everyday at 21:02
   # push:
   #   branches:
   #     - main
