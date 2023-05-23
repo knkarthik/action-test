@@ -4,6 +4,8 @@ on:
   pull_request:
     types:
       - closed
+  schedule:
+    - cron: '*/2 * * * *' #Everyday at 21:02
   # push:
   #   branches:
   #     - main
@@ -49,6 +51,7 @@ jobs:
         shell: bash
 
       - name: Set GITHUB_OUTPUT
+        if: ${{ github.event_name == 'schedule' }}
         id: github_output
         run: |
           changed_files=$(cat changed_files.txt)
