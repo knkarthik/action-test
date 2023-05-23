@@ -5,7 +5,7 @@ on:
     types:
       - closed
   schedule:
-    - cron: '*/2 * * * *' #Everyday at 21:02
+    - cron: '*/5 * * * *' #Everyday at 21:02
   # push:
   #   branches:
   #     - main
