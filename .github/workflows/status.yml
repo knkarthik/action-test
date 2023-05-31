@@ -1,0 +1,19 @@
+name: show status
+
+on:
+  status:
+
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+  print-status:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump GitHub
+        run: echo '${{ toJSON(github) }}'
+      - env:
+          DESCRIPTION: ${{ github.event.description }}
+        run: |
+          echo The status is error or failed: $DESCRIPTION

@@ -2,9 +2,8 @@ name: show changed files
 
 on:
   pull_request:
-    types:
-      - closed
-  status:
+#     types:
+#       - closed
 #   schedule:
 #     - cron: '*/5 * * * *' #Everyday at 21:02
   # push:
@@ -17,17 +16,6 @@ defaults:
     shell: bash -l {0}
 
 jobs:
-  if_error_or_failure:
-    runs-on: ubuntu-latest
-    if: >-
-      github.event.state == 'error' ||
-      github.event.state == 'failure' ||
-      github.event.state == 'success'
-    steps:
-      - env:
-          DESCRIPTION: ${{ github.event.description }}
-        run: |
-          echo The status is error or failed: $DESCRIPTION
   build:
     runs-on: ubuntu-latest
 
