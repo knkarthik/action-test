@@ -19,10 +19,10 @@ defaults:
 jobs:
   if_error_or_failure:
     runs-on: ubuntu-latest
-    if: >-
-      github.event.state == 'error' ||
-      github.event.state == 'failure' ||
-      github.event.state == 'success'
+#     if: >-
+#       github.event.state == 'error' ||
+#       github.event.state == 'failure' ||
+#       github.event.state == 'success'
     steps:
       - env:
           DESCRIPTION: ${{ github.event.description }}
