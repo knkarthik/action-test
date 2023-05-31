@@ -1,3 +1,3 @@
 
 # action-test
-pr-test3
+pr-test
