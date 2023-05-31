@@ -1,7 +1,7 @@
 name: show status
 
 on:
-  status:
+  status
 
 defaults:
   run:
