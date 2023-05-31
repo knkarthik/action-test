@@ -2,8 +2,8 @@ name: show changed files
 
 on:
   pull_request:
-    types:
-      - closed
+#     types:
+#       - closed
   status:
 #   schedule:
 #     - cron: '*/5 * * * *' #Everyday at 21:02
