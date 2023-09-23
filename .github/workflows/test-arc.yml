@@ -6,7 +6,7 @@ on:
 
 jobs:
   single-job:
-    runs-on: [self-hosted,centah]
+    runs-on: centah
     steps:
       - run: echo "🎉 This job uses runner scale set runners!"
   parallel-job:
