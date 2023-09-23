@@ -10,7 +10,7 @@ jobs:
     steps:
       - run: echo "🎉 This job uses runner scale set runners!"
   parallel-job:
-    runs-on: [self-hosted,centah]
+    runs-on: centah
     strategy:
       matrix:
         version: [ 10, 12, 14 ]
