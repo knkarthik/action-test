@@ -2,7 +2,7 @@ name: test-arc
 on:
   push:
     branches:
-      - "kn-test-arc"
+      - kn-test-arc
 
 jobs:
   single-job:
