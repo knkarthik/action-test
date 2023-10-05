@@ -16,7 +16,7 @@ jobs:
       - name: Debug RELEASE_TAG
         run: echo "RELEASE_TAG = ${{ steps.relase-info.outputs.RELEASE_TAG }}"
       - name: Create Issue
-        if: ${{ steps.relase-info.outputs.RELEASE_TAG }} != 'helm-chart-0.9.5'
+        if: ${{ steps.relase-info.outputs.RELEASE_TAG != 'helm-chart-0.9.5' }}
         run: |
           issue_title="New external-secrets release: ${{ steps.relase-info.outputs.RELEASE_TAG }}"
           issue_body="[${{ steps.relase-info.outputs.RELEASE_TAG }}](${{ steps.relase-info.outputs.RELEASE_HTML_URL }}) has been released on ${{ steps.relase-info.outputs.RELEASE_PUBLISHED_AT }}."
