@@ -13,6 +13,8 @@ jobs:
           echo "RELEASE_HTML_URL=$(echo ${latest_release} | jq -r .html_url)" >> $GITHUB_OUTPUT
           echo "RELEASE_PUBLISHED_AT=$(echo ${latest_release} | jq -r .published_at)" >> $GITHUB_OUTPUT
           echo "RELEASE_BODY=$(echo ${latest_release} | jq -r .body)" >> $GITHUB_OUTPUT
+      - name: Debug RELEASE_TAG
+        run: echo "RELEASE_TAG = ${{ steps.relase-info.outputs.RELEASE_TAG }}"
       - name: Create Issue
         if: ${{ steps.relase-info.outputs.RELEASE_TAG }} != 'helm-chart-0.9.5'
         run: |
