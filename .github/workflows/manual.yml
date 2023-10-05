@@ -14,6 +14,7 @@ jobs:
           echo "RELEASE_PUBLISHED_AT=$(echo ${latest_release} | jq -r .published_at)" >> $GITHUB_OUTPUT
           echo "RELEASE_BODY=$(echo ${latest_release} | jq -r .body)" >> $GITHUB_OUTPUT
       - name: Create Issue
+        if: ${{ steps.relase-info.outputs.RELEASE_TAG }} != 'helm-chart-0.9.5'
         run: |
           issue_title="New external-secrets release: ${{ steps.relase-info.outputs.RELEASE_TAG }}"
           issue_body="[${{ steps.relase-info.outputs.RELEASE_TAG }}](${{ steps.relase-info.outputs.RELEASE_HTML_URL }}) has been released on ${{ steps.relase-info.outputs.RELEASE_PUBLISHED_AT }}."
