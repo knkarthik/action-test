@@ -1,0 +1,15 @@
+name: Build Docker Images
+on: [push, repository_dispatch]
+
+jobs:
+  build:
+    name: RedisTimeSeries
+    runs-on: ubuntu-latest
+    steps:
+      - id: actions-runner
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          repository: actions/runner
+      - name: Print outputs
+        run: |
+          echo "${{ steps.actions-runner.outputs.id }} ${{ steps.actions-runner.outputs.release }} "
