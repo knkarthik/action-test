@@ -15,19 +15,18 @@ jobs:
   #     - name: Print outputs
   #       run: |
   #         echo "${{ steps.actions-runner.outputs.id }} ${{ steps.actions-runner.outputs.release }} "
-  container-job:
-    runs-on: ubuntu-latest
-    env:
-      JOB_ENV: job
-    container:
-      image: alpine
-    steps:
-      - name: Print vars
-        run: |
-          echo "$WORKFLOW_ENV $JOB_ENV"
+  # container-job:
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     JOB_ENV: job
+  #   container:
+  #     image: alpine
+  #   steps:
+  #     - name: Print vars
+  #       run: |
+  #         echo "$WORKFLOW_ENV $JOB_ENV"
   my-job:
-    name: rspec
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
