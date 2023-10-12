@@ -1,15 +1,27 @@
 name: Build Docker Images
 on: [push, repository_dispatch]
 
+env:
+  WORKFLOW_ENV: workflow
 jobs:
-  build:
-    name: RedisTimeSeries
+  # build:
+  #   name: RedisTimeSeries
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - id: actions-runner
+  #       uses: pozetroninc/github-action-get-latest-release@master
+  #       with:
+  #         repository: actions/runner
+  #     - name: Print outputs
+  #       run: |
+  #         echo "${{ steps.actions-runner.outputs.id }} ${{ steps.actions-runner.outputs.release }} "
+  container-job:
     runs-on: ubuntu-latest
+    env:
+      JOB_ENV: job
+    container:
+      image: alpine
     steps:
-      - id: actions-runner
-        uses: pozetroninc/github-action-get-latest-release@master
-        with:
-          repository: actions/runner
-      - name: Print outputs
+      - name: Print vars
         run: |
-          echo "${{ steps.actions-runner.outputs.id }} ${{ steps.actions-runner.outputs.release }} "
+          echo "$WORKFLOW_ENV $JOB_ENV"
