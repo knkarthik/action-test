@@ -41,7 +41,7 @@ jobs:
         uses: actions/cache/restore@v3
         with:  
           path: spec/parallel_runtime_rspec.txt
-          key: rspec-runtime-master
+          key: rspec-runtime-main
       - run: pwd && ls -lRat
       - run: |
           JOB_NAME="OS ${{ matrix.os }}"
