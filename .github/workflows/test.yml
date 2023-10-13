@@ -78,12 +78,13 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - run: "echo latest release: '${{ steps.get_latest_release.outputs.data }}'"
-    - uses: xSAVIKx/artifact-exists-action@v0
+    - uses: xSAVIKx/artifact-exists-action@a9dc5938acb0f91260b31a952a914001defb642c #V0.2
       id: check_coverage_artifact
       with:
-        name: artifacts-${{ github.run_id }}
+        name: artifacts-123${{ github.run_id }}
     - run: "echo Artifacts: '${{ steps.check_artifacts.outputs.data }}'"
     - uses: actions/download-artifact@v3
+      if: ${{ steps.check_coverage_artifact.outputs.exists }}
       with:
         name: artifacts-${{ github.run_id }}
     - name: Display structure of downloaded files
