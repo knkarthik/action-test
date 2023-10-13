@@ -59,6 +59,9 @@ jobs:
     needs: [my-job]
     runs-on: ubuntu-latest
     steps:
+    - name: create /app
+      working-directory: /app
+      run: pwd && ls -la
     - uses: actions/download-artifact@v3
       with:
         name: artifacts-${{ github.run_id }}
