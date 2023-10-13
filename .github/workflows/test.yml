@@ -47,7 +47,7 @@ jobs:
           echo "JOB_NAME=$JOB_NAME" > coverage/one/out_${{ github.run_id }}_${{ github.job }}.txt
           echo "JOB_NAME=2" > coverage/one/.out_${{ github.run_id }}_${{ github.job }}.txt
           touch coverage/two/.file.txt coverage/two/out_2_${{ github.run_id }}_${{ github.job }}.txt
-          ls -la
+          ls -laR
       - name: Upload coverage
         uses: actions/upload-artifact@v3
         with:
@@ -67,7 +67,7 @@ jobs:
     - name: Display structure of downloaded files
       run: |
         pwd 
-        ls -l
-        ls -lR tmp || true
-        ls -lR coverage/ || true
+        ls -laR
+        ls -laR tmp || true
+        ls -laR coverage/ || true
       
