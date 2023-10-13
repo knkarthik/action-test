@@ -37,7 +37,12 @@ jobs:
         # When you run 2 parallel jobs then first job will have index 0, the second job will have index 1 etc
         ci_node_index: [0, 1]
     steps:
-      - run: echo ${{ github.job }} # Will only return the job_id: "my-job"
+      - name: Save parallel runtime files to cache
+        uses: actions/cache/restore@v3
+        with:  
+          path: spec/parallel_runtime_rspec.txt
+          key: rspec-runtime-master
+      - run: pwd && ls -lRat
       - run: |
           JOB_NAME="OS ${{ matrix.os }}"
           echo $JOB_NAME
@@ -59,17 +64,24 @@ jobs:
     needs: [my-job]
     runs-on: ubuntu-latest
     steps:
-    - name: create /app
-      run: mkdir /app && pwd && ls -la
     - uses: actions/download-artifact@v3
       with:
         name: artifacts-${{ github.run_id }}
-        path: /app
+        path: app
     - name: Display structure of downloaded files
-      working-directory: /app
+      working-directory: app
       run: |
-        pwd 
+        pwd && mkdir spec spec_acceptance
         ls -laR
         ls -laR tmp || true
         ls -laR coverage/ || true
+        cp tmp/one.txt spec
+        cp tmp/two.txt spec_acceptance
+    - name: Save parallel runtime files to cache
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          spec/one.txt
+          spec_acceptance/two.txt
+        key: rspec-runtime-${{ github.ref_name }}
       
