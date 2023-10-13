@@ -78,16 +78,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - run: "echo latest release: '${{ steps.get_latest_release.outputs.data }}'"
-    - uses: octokit/request-action@v2.x
-      id: check_artifacts
+    - uses: actions/xSAVIKx/artifact-exists-action@v0
+      id: check_coverage_artifact
       with:
-        route: GET /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts?name={artifact_name}
-        owner: knkarthik
-        repo: action-test
-        run_id: ${{ github.run_id }}
-        artifact_name: artifacts-${{ github.run_id }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        name: artifacts-${{ github.run_id }}
     - run: "echo Artifacts: '${{ steps.check_artifacts.outputs.data }}'"
     - uses: actions/download-artifact@v3
       with:
@@ -95,6 +89,7 @@ jobs:
     - name: Display structure of downloaded files
       run: |
         echo "${{ toJson(needs) }}"
+        echo "${{ steps.check_coverage_artifact.outputs.exists }}"
         echo "${{ contains(needs.*.result, 'failure') }}"
         pwd && mkdir spec spec_acceptance
         ls -laR
