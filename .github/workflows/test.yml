@@ -64,7 +64,9 @@ jobs:
     - uses: actions/download-artifact@v3
       with:
         name: artifacts-${{ github.run_id }}
+        path: /app
     - name: Display structure of downloaded files
+      working-directory: /app
       run: |
         pwd 
         ls -laR
