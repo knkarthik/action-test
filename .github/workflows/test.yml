@@ -74,6 +74,7 @@ jobs:
         name: artifacts-${{ github.run_id }}
     - name: Display structure of downloaded files
       run: |
+        echo "${{ contains(needs.*.result, 'failure') }}"
         pwd && mkdir spec spec_acceptance
         ls -laR
         ls -laR tmp || true
