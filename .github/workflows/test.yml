@@ -58,8 +58,6 @@ jobs:
   download:
     needs: [my-job]
     runs-on: ubuntu-latest
-    container:
-      image: alpine
     steps:
     - uses: actions/download-artifact@v3
       with:
