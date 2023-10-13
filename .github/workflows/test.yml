@@ -40,7 +40,7 @@ jobs:
       - name: Save parallel runtime files to cache
         uses: actions/cache/restore@v3
         with:  
-          path: spec/parallel_runtime_rspec.txt
+          path: spec/one.txt
           key: rspec-runtime-${{ github.ref_name }}
       - run: pwd && ls -lRat
       - run: |
