@@ -69,6 +69,17 @@ jobs:
     needs: [my-job]
     runs-on: ubuntu-latest
     steps:
+    - uses: octokit/request-action@v2.x
+      id: check_artifacts
+      with:
+        route: /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts?name={artifact_name}
+        owner: knkarthik
+        repo: action-test
+        run_id: ${{ github.run_id }}
+        artifact_name: artifacts-${{ github.run_id }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - run: "echo Artifacts: '${{ steps.check_artifacts.outputs.data }}'"
     - uses: actions/download-artifact@v3
       with:
         name: artifacts-${{ github.run_id }}
