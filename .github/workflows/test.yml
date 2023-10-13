@@ -41,5 +41,33 @@ jobs:
       - run: |
           JOB_NAME="OS ${{ matrix.os }}"
           echo $JOB_NAME
-          echo "JOB_NAME=$JOB_NAME" > out_${{ github.run_id }}_${{ github.job }}.txt
+          mkdir -p coverage/one
+          mkdir -p coverage/two
+          mkdir -p tmp && touch tmp/one.txt tmp/two.txt
+          echo "JOB_NAME=$JOB_NAME" > coverage/one/out_${{ github.run_id }}_${{ github.job }}.txt
+          echo "JOB_NAME=2" > coverage/one/.out_${{ github.run_id }}_${{ github.job }}.txt
+          touch coverage/two/.file.txt coverage/two/out_2_${{ github.run_id }}_${{ github.job }}.txt
           ls -la
+      - name: Upload coverage
+        uses: actions/upload-artifact@v3
+        with:
+            name: artifacts-${{ github.run_id }}
+            path: |
+              tmp/*.txt
+              coverage/
+  download:
+    needs: [my-job]
+    runs-on: ubuntu-latest
+    container:
+      image: alpine
+    steps:
+    - uses: actions/download-artifact@v3
+      with:
+        name: artifacts-${{ github.run_id }}
+    - name: Display structure of downloaded files
+      run: |
+        pwd 
+        ls -l
+        ls -lR tmp || true
+        ls -lR coverage/ || true
+      
