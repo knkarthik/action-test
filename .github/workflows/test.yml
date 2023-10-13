@@ -40,8 +40,10 @@ jobs:
       - name: Save parallel runtime files to cache
         uses: actions/cache/restore@v3
         with:  
-          path: spec/one.txt
+          path: spec/
           key: rspec-runtime-${{ github.ref_name }}
+          restore-keys: |
+            rspec-runtime-
       - run: pwd && ls -lRat
       - run: |
           JOB_NAME="OS ${{ matrix.os }}"
