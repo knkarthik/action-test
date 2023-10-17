@@ -1,5 +1,5 @@
 name: Create Issue on New Release
-run-name: ${{ github.workflow - inputs.logLevel }}
+run-name: ${{ github.workflow }} - ${{ inputs.logLevel }}
 on:
   workflow_dispatch:
     inputs:
@@ -17,6 +17,7 @@ on:
         description: 'Test scenario tags'
         required: false
         type: boolean
+        default: false
       environment:
         description: 'Environment to run tests against'
         type: boolean
