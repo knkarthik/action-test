@@ -37,7 +37,7 @@ jobs:
       - name: Dump GitHub context
         id: github_context_step
         env:
-          JSON: ${{ toJSON(github) }}
+          JSON: ${{ toJSON(github.event.inputs) }}
         run: echo $JSON
       - name: Get Latest Release Info
         id: relase-info
