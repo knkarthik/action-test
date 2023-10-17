@@ -27,7 +27,7 @@ on:
         type: boolean
 jobs:
   build:
-    if: ${{ inputs }}
+    if: ${{ contains(fromJSON(github.inputs), 'true' ) }}
     uses: ./.github/workflows/ci.yml
     secrets: inherit
   create-issue:
