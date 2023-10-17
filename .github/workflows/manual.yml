@@ -1,4 +1,5 @@
 name: Create Issue on New Release
+run-name: ${{ github.workflow }}-${{ inputs.logLevel }}
 on:
   workflow_dispatch:
     inputs:
