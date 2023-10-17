@@ -3,16 +3,16 @@ run-name: ${{ github.workflow }} - ${{ inputs.logLevel }}
 on:
   workflow_dispatch:
     inputs:
-      logLevel:
-        description: 'Log level'
-        required: true
-        default: 'warning'
-        type: choice
-        options:
-        - info
-        - warning
-        - debug
-        - option 4
+    #   logLevel:
+    #     description: 'Log level'
+    #     required: true
+    #     default: 'warning'
+    #     type: choice
+    #     options:
+    #     - info
+    #     - warning
+    #     - debug
+    #     - option 4
       tags:
         description: 'Test scenario tags'
         required: false
@@ -28,7 +28,7 @@ on:
         type: boolean
 jobs:
   build:
-    if: ${{ inputs.tags }}
+    if: ${{ inputs }}
     uses: ./.github/workflows/ci.yml
     secrets: inherit
   create-issue:
