@@ -22,7 +22,7 @@ on:
         required: true
 jobs:
   build:
-    uses: ./.github/workflows/build.yml
+    uses: ./.github/workflows/ci.yml
     secrets: inherit
   create-issue:
     runs-on: ubuntu-latest
