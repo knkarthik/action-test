@@ -21,6 +21,9 @@ on:
         type: environment
         required: true
 jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
   create-issue:
     runs-on: ubuntu-latest
     steps:
