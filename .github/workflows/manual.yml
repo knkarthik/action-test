@@ -24,11 +24,11 @@ on:
         default: false
 jobs:
   build:
-    if: ${{ inputs.tags == 'true' }}
+    if: ${{ inputs.tags }}
     uses: ./.github/workflows/ci.yml
     secrets: inherit
   create-issue:
-    if: ${{ inputs.environment == 'true' }}
+    if: ${{ ! inputs.environment }}
     runs-on: ubuntu-latest
     steps:
       - name: Dump GitHub context
