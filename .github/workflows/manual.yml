@@ -22,6 +22,10 @@ on:
         type: boolean
         required: true
         default: false
+      print_tags:
+        description: 'True to print to STDOUT'
+        required: true
+        type: boolean
 jobs:
   build:
     if: ${{ inputs.tags }}
