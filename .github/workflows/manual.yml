@@ -1,5 +1,5 @@
 name: Create Issue on New Release
-run-name: ${{ github.workflow }}-${{ inputs.logLevel }}
+run-name: ${{ github.workflow - inputs.logLevel }}
 on:
   workflow_dispatch:
     inputs:
@@ -19,13 +19,15 @@ on:
         type: boolean
       environment:
         description: 'Environment to run tests against'
-        type: environment
+        type: boolean
         required: true
 jobs:
   build:
+    if: ${{ inputs.tags == 'true' }}
     uses: ./.github/workflows/ci.yml
     secrets: inherit
   create-issue:
+    if: ${{ inputs.environment == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Dump GitHub context
