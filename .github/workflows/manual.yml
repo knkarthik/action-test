@@ -17,11 +17,11 @@ on:
         description: 'Test scenario tags'
         required: false
         type: boolean
-        default: false
       environment:
         description: 'Environment to run tests against'
         type: boolean
         required: true
+        default: false
 jobs:
   build:
     if: ${{ inputs.tags == 'true' }}
