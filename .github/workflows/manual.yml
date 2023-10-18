@@ -1,5 +1,5 @@
 name: Create Issue on New Release
-run-name: ${{ github.workflow }} - ${{ fromJSON(github.event.inputs) }}
+run-name: ${{ github.workflow }} - ${{ github.event.inputs }}
 on:
   workflow_dispatch:
     inputs:
