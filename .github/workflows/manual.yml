@@ -1,5 +1,5 @@
 name: Create Issue on New Release
-run-name: ${{ github.workflow }} - ${{ inputs.logLevel }}
+run-name: ${{ github.workflow }} - ${{ fromJSON(github.event.inputs) }}
 on:
   workflow_dispatch:
     inputs:
@@ -27,7 +27,6 @@ on:
         type: boolean
 jobs:
   build:
-    if: ${{ contains(fromJSON(inputs), 'true' ) }}
     uses: ./.github/workflows/ci.yml
     secrets: inherit
   create-issue:
@@ -37,7 +36,7 @@ jobs:
       - name: Dump GitHub context
         id: github_context_step
         env:
-          JSON: ${{ toJSON(github.event.inputs) }}
+          JSON: ${{ toJSON(github) }}
         run: echo $JSON
       - name: Get Latest Release Info
         id: relase-info
