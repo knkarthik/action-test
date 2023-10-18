@@ -1,26 +1,36 @@
 name: Create Issue on New Release
+run-name: "${{ github.workflow }}: ${{ github.ref_name }}"
 on:
   workflow_dispatch:
     inputs:
-      logLevel:
-        description: 'Log level'
-        required: true
-        default: 'warning'
-        type: choice
-        options:
-        - info
-        - warning
-        - debug
+    #   logLevel:
+    #     description: 'Log level'
+    #     required: true
+    #     default: 'warning'
+    #     type: choice
+    #     options:
+    #     - info
+    #     - warning
+    #     - debug
+    #     - option 4
       tags:
         description: 'Test scenario tags'
         required: false
         type: boolean
       environment:
-        description: 'Environment to run tests against'
-        type: environment
+        description: '✅ the Environment to run tests against'
+        type: boolean
         required: true
+      print_tags:
+        description: 'True to print to STDOUT'
+        required: true
+        type: boolean
 jobs:
+  build:
+    uses: ./.github/workflows/ci.yml
+    secrets: inherit
   create-issue:
+    if: ${{ ! inputs.environment }}
     runs-on: ubuntu-latest
     steps:
       - name: Dump GitHub context
