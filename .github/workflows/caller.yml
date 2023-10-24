@@ -16,11 +16,13 @@ jobs:
     concurrency: 
      group: prod-deploy
      cancel-in-progress: false
-    run: echo "building assets" && sleep 60
+    steps:
+      run: echo "building assets" && sleep 60
     
   deplou:
     runs-on: ubuntu-latest
     concurrency: 
      group: prod-deploy
      cancel-in-progress: false
-    run: echo "deploying" && sleep 60
+    steps:
+      run: echo "deploying" && sleep 60
