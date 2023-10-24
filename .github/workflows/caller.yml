@@ -14,12 +14,12 @@ jobs:
   build-assets:
     runs-on: ubuntu-latest
     concurrency: 
-     group: prod-deploy
+     group: assets-deploy
      cancel-in-progress: false
     steps:
       - run: echo "building assets" && sleep 60
     
-  deplou:
+  deploy:
     runs-on: ubuntu-latest
     concurrency: 
      group: prod-deploy

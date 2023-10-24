@@ -21,4 +21,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Dump GitHub
-        run: echo '${{ toJSON(github) }} && sleep 60'
+        run: echo '${{ toJSON(github) }}'
+      - name: Dump GitHub
+        run: sleep 60
