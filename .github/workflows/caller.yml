@@ -17,7 +17,7 @@ jobs:
      group: prod-deploy
      cancel-in-progress: false
     steps:
-      run: echo "building assets" && sleep 60
+      - run: echo "building assets" && sleep 60
     
   deplou:
     runs-on: ubuntu-latest
@@ -25,4 +25,4 @@ jobs:
      group: prod-deploy
      cancel-in-progress: false
     steps:
-      run: echo "deploying" && sleep 60
+      - run: echo "deploying" && sleep 60
