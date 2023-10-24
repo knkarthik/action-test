@@ -1,79 +1,73 @@
-name: Build
+name: show changed files
 
 on:
-  workflow_call:
-    inputs:
-      RAILS_ENV:
-        required: false
-        type: string
-        default: test
-# concurrency: 
-#   group: ${{ github.head_ref || github.run_id }}
-#   cancel-in-progress: true
+  pull_request:
+#     types:
+#       - closed
+#   schedule:
+#     - cron: '*/5 * * * *' #Everyday at 21:02
+  # push:
+  #   branches:
+  #     - main
+  workflow_dispatch:
+
 defaults:
   run:
-   shell: bash -l {0}
+    shell: bash -l {0}
+
 jobs:
-  base:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Dump GitHub context
-        id: github_context_step
-        env:
-          JSON: ${{ toJSON(github) }}
-        run: echo $JSON
-#       - name: Checkout
-#         uses: actions/checkout@v3
-#         with:
-#           fetch-depth: 2
-#       - name: "[Push] Get commit message"
-#         if: github.event_name == 'push'
-#         id: push_get_commit_message
-#         run: |
-#           echo "$(git log --format=%B -n 1 HEAD)"
-#           echo "push_commit_message=$(git log --format=%B -n 1 HEAD | tr '\n' ' ')" >> $GITHUB_OUTPUT
+      - name: Dump GitHub
+        run: echo '${{ toJSON(github) }}'
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 #required so that github.event.pull_request.base.sha is availabe for diff check below
+        id: checkout
+        # if: github.event_name == 'pull_request'
 
-#         # If this workflow was triggered by a pull request (open or synchronize!) then resolve the commit message from HEAD^2
-#         # It is stored in output steps, to be referenced with ${{ steps.pr_get_commit_message.outputs.pr_commit_message }}
-#       - name: "[Pull Request] Get commit message"
-#         if: github.event_name == 'pull_request'
-#         id: pr_get_commit_message
-#         run: echo "pr_commit_message=$(git log --format=%B -n 1 HEAD^2 | tr '\n' ' ')" >> $GITHUB_OUTPUT
+      # - name: Checkout repository
+      #   uses: actions/checkout@v3
+      #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
-#     # Finally we want to make the commit message available to other jobs. This can be done with job-level outputs
-#     # However as we do not know whether the commit message was set in Push or Pull Request event we need to do some
-#     # bash magic to resolve the one or the other
-#     #
-#     # For **Pull Request** events this will resolve to something like "$( [ -z "commit message pr" ] && echo "" || echo "commit message pr" )" which then resolves to just "commit message pr"
-#     #
-#     # For **Push** events this will resolve to something like "$( [ -z "" ] && echo "commit message push"  || echo "" )" which then resolves to just "commit message push"
-#     outputs:
-#         commit_message: $( [ -z "${{ steps.pr_get_commit_message.outputs.pr_commit_message }}" ] && echo "${{ steps.push_get_commit_message.outputs.push_commit_message }}" || echo "${{ steps.pr_get_commit_message.outputs.pr_commit_message }}" )
+      - name: Show changed files in PR or master branch
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          ls -lrtha && ls -lrtha .git/
+          echo "The short SHA is $(git rev-parse --short ${{ github.event.pull_request.head.sha || github.sha }})"
+          echo "GITHUB_SHA is : $GITHUB_SHA" # for pr this is test merge-commit DO NOT USE THIS TO TAG DOCKER IMAGES!
+          echo 'pr base sha is : ${{ github.event.pull_request.base.sha }}' # base commit of PR
+          echo 'pr head sha is: ${{ github.event.pull_request.head.sha }}' # Head commit of PR, WON'T change for re-runs!
+          echo 'before and after is: ${{ github.event.before }} ${{ github.event.after }}'
+          if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
+            git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > changed_files.txt
+            cat changed_files.txt
+          # elif [ "$GITHUB_EVENT_NAME" == "push" ]; then
+          #   git diff --name-only ${{ github.event.before }} ${{ github.event.after }} > changed_files.txt
+          fi
+          
+        shell: bash
 
-#   build:
-#     runs-on: ubuntu-latest
-#     needs: [base]
-#     steps:
-#       - name: "[push] Dump GitHub"
-#         if: github.event_name == 'push'
-#         run: echo '${{ toJSON(github) }}'
-#       - name: "[pull request] Dump GitHub"
-#         if: github.event_name == 'pull_request'
-#         run: echo '${{ toJSON(github) }}'
-#       - name: "[commit] print if update base"
-#         if: contains(needs.base.outputs.commit_message, '[update base]')
-#         run: echo 'update base present'
-#       - name: print head info and others
-#         run: |
-#           cat README.md
-#           echo 'github.head_ref => ${{ github.head_ref }}, head_commit message => ${{ github.event.head_commit.message }}'
-#           echo 'github.ref_name => ${{ github.ref_name }}, head_commit message => ${{ github.event.head_commit.message }}'
-#           echo 'head_commit message => ${{ github.event.head_commit.message }}'
-#           #export PERCY_ENABLE=${{ steps.enable_percy.outputs.PERCY_ENABLE }}
-#           echo "The percy enabled is $PERCY_ENABLE"
-# #       - name: Dump job context
-# #         run: echo '${{ toJSON(job) }}'
-# #       - name: Dump steps context
-# #         run: echo '${{ toJSON(steps) }}'
-# #       - name: Dump runner context
-#         run: echo '${{ toJSON(runner) }}'
+      - name: Set GITHUB_OUTPUT
+        if: ${{ github.event_name == 'schedule' }}
+        id: github_output
+        run: |
+          changed_files=$(cat changed_files.txt)
+          if [[ $changed_files =~ Gemfile\.lock || $changed_files =~ yarn\.lock || $changed_files =~ Gemfile || $changed_files =~ README.md ]]; then
+            echo "BASE_CHANGED=true" > $GITHUB_OUTPUT
+          else
+            echo "BASE_CHANGED=false" > $GITHUB_OUTPUT
+          fi
+      
+      - name: Print
+        if: steps.github_output.outputs.BASE_CHANGED == 'true'
+        run: |
+          echo "GITHUB_OUTPUT: ${{ steps.github_output.outputs.BASE_CHANGED }}"
+          echo 'github.head_ref => ${{ github.head_ref }}, head_commit message => ${{ github.event.head_commit.message }}'
+          echo 'github.ref_name => ${{ github.ref_name }}, head_commit message => ${{ github.event.head_commit.message }}'
+          echo 'head_commit message => ${{ github.event.head_commit.message }}'
+          echo 'pr head commit -> ${{ github.event.pull_request.head.sha }}'
+          echo "GITHUB_SHA is $GITHUB_SHA"

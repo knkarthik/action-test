@@ -1,0 +1,26 @@
+name: caller
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch: {}
+
+job:
+  run-tests:
+    uses: ./.github/workflows/called.yml
+
+  build-assets:
+    runs-on: ubuntu-latest
+    concurrency: 
+     group: prod-deploy
+     cancel-in-progress: false
+    run: echo "building assets" && sleep 60
+    
+  deplou:
+    runs-on: ubuntu-latest
+    concurrency: 
+     group: prod-deploy
+     cancel-in-progress: false
+    run: echo "deploying" && sleep 60

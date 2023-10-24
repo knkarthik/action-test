@@ -1,0 +1,24 @@
+name: show status
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+on:
+  workflow_call:
+    inputs:
+      test:
+        required: false
+        type: string
+        default: test
+
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+  print-status:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump GitHub
+        run: echo '${{ toJSON(github) }} && sleep 60'
