@@ -5,12 +5,17 @@ name: caller
 #   cancel-in-progress: false
 
 on:
+  push:
+    branches:
+      - master
   workflow_dispatch: 
     inputs:
       deploy:
         desription: "Check to deploy latest master to production"
         type: boolean
-        
+      test_push:
+        desription: "simulate push event to test"
+        type: boolean
       # ONETIMER_NAME:
       #   type: string
       #   required: false
@@ -18,7 +23,7 @@ on:
 
 jobs:
   run-tests:
-    if: ${{ github.event_name != 'workflow_dispatch' || inputs.deploy != 'true' }}  
+    if: ${{ github.event_name == 'push' || inputs.test_push == 'true' }} 
     uses: ./.github/workflows/called.yml
     with:
       concurrency_key: ${{ github.run_id }}
