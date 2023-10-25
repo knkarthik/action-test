@@ -18,7 +18,7 @@ on:
 
 jobs:
   run-tests:
-    if: ${{ github.event_name != 'workflow_dispatch' }}  
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.deploy != 'true' }}  
     uses: ./.github/workflows/called.yml
     with:
       concurrency_key: ${{ github.run_id }}
