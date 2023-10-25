@@ -43,6 +43,7 @@ jobs:
      group: ${{ github.run_id }}
      cancel-in-progress: false
     steps:
+      - run: echo '${{ toJSON(github) }}'
       - run: echo "should run for all commiits" && sleep 20
 
   build-assets:
