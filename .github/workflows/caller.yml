@@ -44,6 +44,7 @@ jobs:
      cancel-in-progress: false
     steps:
       - run: echo '${{ toJSON(github) }}'
+      - run: echo "${{ vars.SERVERS }}" > README.md && cat README.md
       - run: echo "should run for all commiits" && sleep 20
 
   build-assets:
