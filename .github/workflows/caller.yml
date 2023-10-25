@@ -10,8 +10,8 @@ on:
 jobs:
   run-tests:
     concurrency: 
-    group: {{ github.run_id }}
-    cancel-in-progress: false
+      group: {{ github.run_id }}
+      cancel-in-progress: false
     uses: ./.github/workflows/called.yml
 
   build-assets:
