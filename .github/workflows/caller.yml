@@ -23,7 +23,7 @@ on:
 
 jobs:
   run-tests:
-    if: ${{ github.event_name == 'push' || inputs.test_push == 'true' }} 
+    if: ${{ github.event_name == 'push' || github.event.inputs.test_push == 'true' }} 
     uses: ./.github/workflows/called.yml
     with:
       concurrency_key: ${{ github.run_id }}
@@ -66,7 +66,7 @@ jobs:
   ##   so that onnly the NEWEST commit will get deployed
   ## - must be manually triggered by clicking the checkbox
   deploy:
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy == 'true' }}  
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' }}  
     runs-on: ubuntu-latest
     needs: [build-assets]
     concurrency: 
