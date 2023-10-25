@@ -23,7 +23,8 @@ on:
 
 jobs:
   run-tests:
-    if: ${{ github.event_name == 'push' || github.event.inputs.test_push == 'true' }} 
+    # if: ${{ github.event_name == 'push' || github.event.inputs.test_push == 'true' }} 
+    if: ${{ github.event_name == 'workflow_dispatch' && github.ref_name == 'main' }} 
     uses: ./.github/workflows/called.yml
     with:
       concurrency_key: ${{ github.run_id }}
