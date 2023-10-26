@@ -27,4 +27,4 @@ jobs:
       - name: Dump GitHub
         run: echo '${{ toJSON(github) }}'
       - name: Dump GitHub
-        run: sleep 30
+        run: sleep 5
