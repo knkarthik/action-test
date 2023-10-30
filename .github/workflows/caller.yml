@@ -25,7 +25,7 @@ on:
 jobs:
   test-job:
     runs-on: ubuntu-latest
-    if: always && contains(fromJson('["test","aut"]'), github.head_ref) || contains(fromJson('["test", "aut"]'), github.ref_name)
+    if: always() && contains(fromJson('["test","aut"]'), github.head_ref) || contains(fromJson('["test", "aut"]'), github.ref_name)
     steps:
       - run: echo ${{ github }}
 
