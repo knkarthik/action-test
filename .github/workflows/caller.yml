@@ -28,7 +28,7 @@ jobs:
     # if: startsWith(github.head_ref, 'AUT') || startsWith(github.ref_name, 'AUT') || startsWith(github.head_ref, 'test') || startsWith(github.ref_name, 'test')
     env:
       JSON: ${{ toJSON(github) }}
-      GH_TOKEN: ${{ github.token }}
+      GH_TOKEN: ${{ secrets.READ_CLEARSPELL_VARIABLES }}
     steps:
       - run: echo $JSON
       - run: |
