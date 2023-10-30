@@ -25,7 +25,7 @@ on:
 jobs:
   test-job:
     runs-on: ubuntu-latest
-    if: ${{ contains(fromJson('["test"]'), github.ref_name ) }}
+    if: startsWith(github.head_ref, 'AUT') || startsWith(github.ref_name, 'AUT') || startsWith(github.head_ref, 'test') || startsWith(github.ref_name, 'test')
     env:
       JSON: ${{ toJSON(github) }}
     steps:
