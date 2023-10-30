@@ -28,7 +28,8 @@ jobs:
     if: github.event_name == 'push' && contains(fromJson('["test","aut"]'), github.ref_name)
     env:
       JSON: ${{ toJSON(github) }}
-    run: echo $JSON
+    steps:
+      - run: echo $JSON
     
 
 #   run-tests:
