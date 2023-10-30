@@ -22,6 +22,12 @@ on:
       #   default: TEST:ME
 
 jobs:
+  test-job:
+  runs-on: ubuntu-latest
+  if: contains(fromJson('["AUT"]'), github.head_ref) || contains(fromJson('["AUT"]'), github.ref_name)
+  steps:
+    - run: echo "ran"
+
   run-tests:
     if: ${{ github.event_name == 'push' || github.event.inputs.test_push == 'true' }} 
     uses: ./.github/workflows/called.yml
