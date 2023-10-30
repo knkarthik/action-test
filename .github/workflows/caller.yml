@@ -25,7 +25,7 @@ on:
 jobs:
   test-job:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && contains(fromJson('["test-","aut-"]'), github.ref_name)
+    if: ${{ github.event_name == 'push' && contains(fromJson('["test-","aut-"]'), github.ref_name ) }}
     env:
       JSON: ${{ toJSON(github) }}
     steps:
