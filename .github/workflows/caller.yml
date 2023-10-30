@@ -24,7 +24,7 @@ on:
 jobs:
   test-job:
     runs-on: ubuntu-latest
-    if: contains(fromJson('["test"]'), github.head_ref) || contains(fromJson('["AUT"]'), github.ref_name)
+    if: contains(fromJson('["aut"]'), github.head_ref) || contains(fromJson('["test"]'), github.ref_name)
     steps:
       - run: echo "ran"
 
