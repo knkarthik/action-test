@@ -8,6 +8,7 @@ on:
   push:
     branches-ignore:
       - master
+  pull_request:
   workflow_dispatch: 
     inputs:
       deploy:
@@ -24,7 +25,7 @@ on:
 jobs:
   test-job:
     runs-on: ubuntu-latest
-    if: always() && (contains(fromJson('["aut"]'), github.head_ref) || contains(fromJson('["test"]'), github.ref_name))
+    if: always() && (contains(fromJson('["tres"]'), github.head_ref) || contains(fromJson('["test-"]'), github.ref_name))
     steps:
       - run: echo "ran"
 
