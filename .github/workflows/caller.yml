@@ -25,9 +25,9 @@ on:
 jobs:
   test-job:
     runs-on: ubuntu-latest
-    if: (contains(fromJson('["tres"]'), github.head_ref) || contains(fromJson('["test-"]'), github.ref_name))
+    if: contains(fromJson('["test","aut"]'), github.head_ref) || contains(fromJson('["test-"]'), github.ref_name)
     steps:
-      - run: echo "ran"
+      - run: echo ${{ github }}
 
 #   run-tests:
 #     if: ${{ github.event_name == 'push' || github.event.inputs.test_push == 'true' }} 
