@@ -25,11 +25,14 @@ on:
 jobs:
   test-job:
     runs-on: ubuntu-latest
-    if: startsWith(github.head_ref, 'AUT') || startsWith(github.ref_name, 'AUT') || startsWith(github.head_ref, 'test') || startsWith(github.ref_name, 'test')
+    # if: startsWith(github.head_ref, 'AUT') || startsWith(github.ref_name, 'AUT') || startsWith(github.head_ref, 'test') || startsWith(github.ref_name, 'test')
     env:
       JSON: ${{ toJSON(github) }}
+      GH_TOKEN: ${{ github.token }}
     steps:
       - run: echo $JSON
+      - run: |
+          gh api   -H "Accept: application/vnd.github+json"   -H "X-GitHub-Api-Version: 2022-11-28"   /repos/knkarthik/clearSpell/actions/variables/CONFIG_FILE
     
 
 #   run-tests:
