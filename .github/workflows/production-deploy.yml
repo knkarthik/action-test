@@ -31,7 +31,7 @@ jobs:
       - run: echo '${{ toJSON(github) }}'
 
   production-ember-build:
-    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'main' }}
+    # if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'main' }}
     needs: [build-base]
     concurrency: 
       group: production-ember-build-${{ github.run_id }}
