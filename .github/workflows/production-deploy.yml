@@ -54,4 +54,4 @@ jobs:
     steps:
       - name: prod deploy
         id: prod-deploy
-        run: echo "URL=prod" >> $GITHUB_OUTPUT
+        run: echo "URL=http://prod.example.com" >> $GITHUB_OUTPUT
