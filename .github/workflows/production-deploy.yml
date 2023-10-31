@@ -38,7 +38,7 @@ production-ember-build:
      cancel-in-progress: false
    runs-on: ubuntu-latest
    steps:
-      - run: echo '${{ toJSON(github) }}' && sleep 5
+      - run: echo '${{ toJSON(github) }}'
 
   production-deploy:
     if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'main' }}
