@@ -45,7 +45,7 @@ jobs:
     needs: [production-ember-build]
     runs-on: ubuntu-latest
     concurrency: 
-    group: production-deploy
-    cancel-in-progress: false
+      group: production-deploy
+      cancel-in-progress: false
     steps:
       - run: echo "deploying" && sleep 5
