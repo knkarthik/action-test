@@ -41,7 +41,7 @@ jobs:
       - run: echo "deploying" && sleep 5
 
   production-deploy:
-    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'main' }}
+    # if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'main' }}
     needs: [production-ember-build]
     runs-on: ubuntu-latest
     environment: production
