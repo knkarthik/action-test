@@ -68,7 +68,7 @@ jobs:
       matrix:
         ci_node_total: [2]
         ci_node_index: [0, 1]
-      steps:
+    steps:
       - name: echo
         run: echo "success"
   acceptance:
@@ -79,7 +79,7 @@ jobs:
       matrix:
         ci_node_total: [2]
         ci_node_index: [0, 1]
-      steps:
+    steps:
       - name: echo
         run: echo "success"
   sonarcloud:
