@@ -40,7 +40,7 @@ production-ember-build:
    steps:
     - run: echo "deploying" && sleep 5
 
-  production-deploy:
+production-deploy:
     if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'main' }}
     needs: [production-ember-build]
     runs-on: ubuntu-latest
