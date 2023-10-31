@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: 
       name: prod
-      url: ${{ steps.prod-deploy.outputs.URL }}.example.com
+      url: ${{ steps.prod-deploy.outputs.URL }}
     concurrency: 
       group: production-deploy
       cancel-in-progress: false
