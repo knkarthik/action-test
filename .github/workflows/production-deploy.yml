@@ -45,7 +45,7 @@ jobs:
     needs: [production-ember-build]
     runs-on: ubuntu-latest
     environment: 
-      name: production
+      name: prod
       url: 'http://example.com'
     concurrency: 
       group: production-deploy
