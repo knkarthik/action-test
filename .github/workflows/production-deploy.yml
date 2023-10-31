@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: 
       name: prod
-      url: "${{ format('{0}{1}{2}', 'https://', steps.prod-deploy.outputs.URL, '.com') }}
+      url: "${{ format('{0}{1}{2}', 'https://', steps.prod-deploy.outputs.URL, '.com') }}"
     concurrency: 
       group: production-deploy
       cancel-in-progress: false
