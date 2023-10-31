@@ -44,6 +44,7 @@ jobs:
     if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'main' }}
     needs: [production-ember-build]
     runs-on: ubuntu-latest
+    environment: production
     concurrency: 
       group: production-deploy
       cancel-in-progress: false
