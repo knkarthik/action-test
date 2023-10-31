@@ -1,0 +1,97 @@
+name: Build and test
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}-${{ inputs.concurrency_key }}
+  cancel-in-progress: true
+
+on:
+  push: 
+    branches-ignore:    
+      - 'main'
+  workflow_call: 
+    inputs:
+      concurrency_key: 
+        required: false
+        type: string
+        default: qa
+env:
+  BUNDLE_SILENCE_ROOT_WARNING: 1
+  CI: "true"
+
+jobs:
+  build-base:
+    runs-on: ubuntu-latest
+    steps:
+      - name: echo
+        run: echo "success"
+  build-ci:
+    needs: build-base
+    runs-on: ubuntu-latest
+    steps:
+      - name: echo
+        run: echo "success"
+  build-demo:
+    needs: build-base
+    runs-on: ubuntu-latest
+    steps:
+      - name: echo
+        run: echo "success"
+  brakeman:
+    needs: [build-ci]
+    runs-on: ubuntu-latest
+    steps:
+      - name: echo
+        run: echo "success"
+  rubocop:
+    needs: [build-ci]
+    runs-on: ubuntu-latest
+    steps:
+      - name: echo
+        run: echo "success"
+  ember-lint:
+    needs: [build-ci]
+    runs-on: ubuntu-latest
+    steps:
+      - name: echo
+        run: echo "success"
+  ember:
+    needs: [build-ci]
+    runs-on: ubuntu-latest
+    steps:
+      - name: echo
+        run: echo "success"
+  rspec:
+    needs: [build-ci]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ci_node_total: [2]
+        ci_node_index: [0, 1]
+    steps:
+      - name: echo
+        run: echo "success"
+  acceptance:
+    needs: [build-ci]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ci_node_total: [2]
+        ci_node_index: [0, 1]
+    steps:
+      - name: echo
+        run: echo "success"
+  sonarcloud:
+    needs: [build-ci, rspec]
+    runs-on: ubuntu-latest
+    steps:
+    - name: echo
+      run: echo "success"
+  cache-runtime:
+    runs-on: ubuntu-latest
+    needs: [rspec, acceptance]
+    steps:
+    - name: Process rspec parallel runtime files
+      run: echo "success"
+    

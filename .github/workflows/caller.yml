@@ -6,8 +6,9 @@ name: caller
 
 on:
   push:
-    branches:
+    branches-ignore:
       - master
+  pull_request:
   workflow_dispatch: 
     inputs:
       deploy:
@@ -22,6 +23,18 @@ on:
       #   default: TEST:ME
 
 jobs:
+  # test-job:
+  #   runs-on: ubuntu-latest
+  #   # if: startsWith(github.head_ref, 'AUT') || startsWith(github.ref_name, 'AUT') || startsWith(github.head_ref, 'test') || startsWith(github.ref_name, 'test')
+  #   env:
+  #     JSON: ${{ toJSON(github) }}
+  #     GH_TOKEN: ${{ secrets.READ_CLEARSPELL_VARIABLES }}
+  #   steps:
+  #     - run: echo $JSON
+  #     - run: |
+  #         gh api   -H "Accept: application/vnd.github+json"   -H "X-GitHub-Api-Version: 2022-11-28"   /repos/knkarthik/clearSpell/actions/variables/CONFIG_FILE
+    
+
   run-tests:
     if: ${{ github.event_name == 'push' || github.event.inputs.test_push == 'true' }} 
     uses: ./.github/workflows/called.yml
