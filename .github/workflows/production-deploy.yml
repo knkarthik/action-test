@@ -47,11 +47,11 @@ jobs:
     runs-on: ubuntu-latest
     environment: 
       name: prod
-      url: ${{ steps.prod-deploy.outputs.URL }}
+      url: "${{ format('{0}{1}{2}', 'https://', steps.prod-deploy.outputs.URL, '.com') }}
     concurrency: 
       group: production-deploy
       cancel-in-progress: false
     steps:
       - name: prod deploy
         id: prod-deploy
-        run: echo "URL=http://prod.example.com" >> $GITHUB_OUTPUT
+        run: echo "URL=prod" >> $GITHUB_OUTPUT
