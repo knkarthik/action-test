@@ -42,13 +42,16 @@ jobs:
 
   production-deploy:
     # if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'main' }}
+    
     needs: [production-ember-build]
     runs-on: ubuntu-latest
     environment: 
       name: prod
-      url: 'http://example.com'
+      url: "${{ steps.prod-deploy.outputs.URL }}.example.com"
     concurrency: 
       group: production-deploy
       cancel-in-progress: false
     steps:
-      - run: echo "deploying" && sleep 5
+      - name: prod deploy
+        id: prod-deploy
+        run: echo "URL=prod" >> $GITHUB_OUTPUT
