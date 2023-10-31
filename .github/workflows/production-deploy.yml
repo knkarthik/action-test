@@ -30,22 +30,22 @@ jobs:
     steps:
       - run: echo '${{ toJSON(github) }}'
 
-production-ember-build:
-   if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'main' }}
-   needs: [build-base]
-   concurrency: 
-     group: production-ember-build-${{ github.run_id }}
-     cancel-in-progress: false
-   runs-on: ubuntu-latest
-   steps:
-    - run: echo "deploying" && sleep 5
+  production-ember-build:
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'main' }}
+    needs: [build-base]
+    concurrency: 
+      group: production-ember-build-${{ github.run_id }}
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "deploying" && sleep 5
 
-production-deploy:
+  production-deploy:
     if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'main' }}
     needs: [production-ember-build]
     runs-on: ubuntu-latest
     concurrency: 
-     group: production-deploy
-     cancel-in-progress: false
+    group: production-deploy
+    cancel-in-progress: false
     steps:
       - run: echo "deploying" && sleep 5
