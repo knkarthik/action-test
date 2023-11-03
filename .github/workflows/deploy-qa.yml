@@ -17,14 +17,15 @@ jobs:
 
       - name: Create New Branch
         id: create-branch
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           INPUT_BRANCHES="${{ github.event.inputs.branches }}"
           INPUT_BRANCHES="$(echo -e "${INPUT_BRANCHES}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
           TIMESTAMP=$(date +'%Y%m%d%H%M%S')
           NEW_BRANCH_NAME="merged-branches-${{ github.ref_name }}-$TIMESTAMP"
           BASE_BRANCH=${{ github.ref_name }}
-          ACCESS_TOKEN="$GITHUB_TOKEN"
-          REPO_OWNER=${{ github.repository_owner }}
+          ACCESS_TOKEN="$GH_TOKEN"
           REPO_NAME=${{ github.repository }}
 
           # Create a new branch using the GitHub API
@@ -32,9 +33,9 @@ jobs:
             -H "Authorization: token $ACCESS_TOKEN" \
             -d '{
               "ref": "refs/heads/'$NEW_BRANCH_NAME'",
-              "sha": "'$(curl -s -H "Authorization: token $ACCESS_TOKEN" https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/git/refs/heads/$BASE_BRANCH | jq -r '.object.sha')'"
+              "sha": "'$(curl -s -H "Authorization: token $ACCESS_TOKEN" https://api.github.com/repos/$REPO_NAME/git/refs/heads/$BASE_BRANCH | jq -r '.object.sha')'"
             }' \
-            "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/git/refs"
+            "https://api.github.com/repos/$REPO_NAME/git/refs"
 
           echo "New branch name: $NEW_BRANCH_NAME"
           echo "Input branches: $INPUT_BRANCHES"
