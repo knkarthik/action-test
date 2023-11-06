@@ -20,7 +20,7 @@ on:
         required: false
         type: boolean
 jobs:
-  skip_if_empty_branches:
+  skip_if_not_empty_branches:
     if: ${{ github.event.inputs.branches == '' }}
     runs-on: ubuntu-latest
     steps:
@@ -90,7 +90,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ steps.create-branch.outputs.NEW_BRANCH_NAME }}
-      - run: echo "${{toJson(github.event.inputs)}}"
+      - run: |
+           echo "${{fromJson(github.event.inputs)}}" 
+           echo "${{fromJson(github.event.inputs)}}" | jq 'del(.branches)' 
       # - name: Push Merged Branch
       #   run: |
       #     git push origin $NEW_BRANCH_NAME
