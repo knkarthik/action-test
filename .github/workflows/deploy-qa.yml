@@ -4,8 +4,9 @@ on:
   workflow_dispatch: 
     inputs:
      branches:
-      description: "Branches to merge"
-      type: string
+        description: 'Comma-separated list of other branches to merge (eg: AUT-123,xyz-1)'
+        required: false
+        type: string
 
 jobs:
   merge-branches:
@@ -22,9 +23,10 @@ jobs:
         continue-on-error: false
         run: |
           INPUT_BRANCHES="$(echo -e "${{ github.event.inputs.branches }}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | tr ',' ' ' | tr -s ' ' )"
-          MERGED_BRANCHES=$(echo ${INPUT_BRANCHES/ /_})
-          TIMESTAMP=$(date +'%Y%m%d%H%M%S')
-          NEW_BRANCH_NAME="${{ github.ref_name }}_fitbot_merged_${MERGED_BRANCHES}_${TIMESTAMP}"
+          merged_branches=$(echo ${INPUT_BRANCHES/ /_})
+          timestamp=$(date +'%Y%m%d%H%M%S')
+          temp_branch_name="${{ github.ref_name }}_fitbot_merged_${merged_branches}_${timestamp}"
+          NEW_BRANCH_NAME="${temp_branch_name:0:100}"
           # Create a new branch from latest master
           gh api \
             --method POST \
@@ -32,14 +34,6 @@ jobs:
             --field ref="refs/heads/$NEW_BRANCH_NAME" \
             --field sha=$(gh api repos/$REPO_NAME/git/refs/heads/$BASE_BRANCH --jq '.object.sha') \
             --silent
-          # curl -X POST \
-          #   -H "Authorization: token $GH_TOKEN" \
-          #   -d '{
-          #     "ref": "refs/heads/'$NEW_BRANCH_NAME'",
-          #     "sha": "'$(curl -s -H "Authorization: token $GH_TOKEN" https://api.github.com/repos/$REPO_NAME/git/refs/heads/$BASE_BRANCH | jq -r '.object.sha')'"
-          #   }' \
-          #   "https://api.github.com/repos/$REPO_NAME/git/refs"
-
           echo "New branch name: $NEW_BRANCH_NAME"
           echo "Input branches: $INPUT_BRANCHES"
           echo "INPUT_BRANCHES=$INPUT_BRANCHES" >> $GITHUB_OUTPUT
@@ -67,14 +61,15 @@ jobs:
               -f head="$BRANCH" \
               -f commit_message="Merge $BRANCH [skip ci]" \
               --silent 
-            if [ $? -ne 0 ]
+            if [[ $? -ne 0 ]]
             then
-              echo "Merge conflict or failure detected while merging $BRANCH. Deleting the new branch."
+              echo "Merge conflict or failure detected while merging $BRANCH."
               gh api -X DELETE "repos/$REPO_NAME/git/refs/heads/$NEW_BRANCH_NAME"
               exit 1
             fi
           done
           echo "All branches merged successfully."
+          echo "NEW_BRANCH_NAME=$NEW_BRANCH_NAME" >> $GITHUB_OUTPUT
 
       # - name: Push Merged Branch
       #   run: |
