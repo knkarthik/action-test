@@ -33,6 +33,9 @@ jobs:
       BASE_BRANCH: main
       REPO_NAME: ${{ github.repository }}
     steps:
+      - run: |
+           echo "${{toJson(github.event.inputs)}}" 
+           echo "${{toJson(github.event.inputs)}}" | jq 'del(.branches)' || echo '${{toJson(github.event.inputs)}}' | jq 'del(.branches)' 
       - name: Check Out Code
         uses: actions/checkout@v4
       - name: Create New Branch
@@ -92,8 +95,8 @@ jobs:
         with:
           ref: ${{ steps.create-branch.outputs.NEW_BRANCH_NAME }}
       - run: |
-           echo "${{fromJson(github.event.inputs)}}" 
-          #  echo "${{fromJson(github.event.inputs)}}" | jq 'del(.branches)' 
+           echo "${{toJson(github.event.inputs)}}" 
+           echo "${{toJson(github.event.inputs)}}" | jq 'del(.branches)' || echo '${{toJson(github.event.inputs)}}' | jq 'del(.branches)' 
       # - name: Push Merged Branch
       #   run: |
       #     git push origin $NEW_BRANCH_NAME
