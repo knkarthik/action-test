@@ -4,7 +4,7 @@ on:
   workflow_dispatch: 
     inputs:
      branches:
-        description: 'Comma-separated list of other branches to merge (eg: AUT-123,xyz-1)'
+        description: 'Other branches to merge (eg: AUT-123,xyz-1)'
         required: false
         type: string
 
@@ -70,7 +70,11 @@ jobs:
           done
           echo "All branches merged successfully."
           echo "NEW_BRANCH_NAME=$NEW_BRANCH_NAME" >> $GITHUB_OUTPUT
-
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.create-branch.outputs.NEW_BRANCH_NAME }}
+      - run: ls -la
       # - name: Push Merged Branch
       #   run: |
       #     git push origin $NEW_BRANCH_NAME
