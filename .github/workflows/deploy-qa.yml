@@ -35,7 +35,7 @@ jobs:
     steps:
       - run: |
            echo "${{toJson(github.event.inputs)}}" 
-           echo "${{toJson(github.event.inputs)}}" | jq 'del(.branches)' || echo '${{toJson(github.event.inputs)}}' | jq 'del(.branches)' 
+           echo "${{fromJson(toJson(github.event.inputs))}}" | jq 'del(.branches)'
       - name: Check Out Code
         uses: actions/checkout@v4
       - name: Create New Branch
