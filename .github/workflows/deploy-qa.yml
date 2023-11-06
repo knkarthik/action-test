@@ -7,10 +7,21 @@ on:
         description: 'Other branches to merge (eg: AUT-123,xyz-1)'
         required: false
         type: string
-
+     DATABASE:
+        description: 'Copy data from master'
+        required: false
+        type: boolean
+     ENABLE_THIS:
+        description: 'Enable this'
+        required: false
+        type: boolean
+     TEST_RACK_ATTACK:
+        description: 'Enable Rack::Attack'
+        required: false
+        type: boolean
 jobs:
-  skip:
-    if: ${{github.event.inputs.branches == '' }}
+  skip_if_empty_branches:
+    if: ${{ github.event.inputs.branches == '' }}
     runs-on: ubuntu-latest
     steps:
       - run: ls -l
@@ -79,7 +90,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ steps.create-branch.outputs.NEW_BRANCH_NAME }}
-      - run: ls -la
+      - run: echo "${{toJson(github.event.inputs)}}"
       # - name: Push Merged Branch
       #   run: |
       #     git push origin $NEW_BRANCH_NAME
