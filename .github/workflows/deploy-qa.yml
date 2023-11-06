@@ -92,8 +92,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ steps.create-branch.outputs.NEW_BRANCH_NAME }}
-      - run: |
-           echo "${{toJson(github.event.inputs)}}" 
+      - name: Trigger deploy for branch ${{ steps.create-branch.outputs.NEW_BRANCH_NAME }}
+        run: |
+           echo "Workflow was triggered with: ${{toJson(github.event.inputs)}}" 
            echo '${{toJson(github.event.inputs)}}' | jq 'del(.branches)' | gh workflow run deploy-qa.yml --ref ${{ steps.create-branch.outputs.NEW_BRANCH_NAME }}
            echo "### Triggered a new QA deploy workflow! :rocket:" >> $GITHUB_STEP_SUMMARY
            echo "Checkout the [workflow runs](https://github.com/knkarthik/action-test/actions/workflows/deploy-qa.yml?query=actor%3Agithub-actions+branch%3A${{ steps.create-branch.outputs.NEW_BRANCH_NAME }})" >> $GITHUB_STEP_SUMMARY
