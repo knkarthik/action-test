@@ -9,6 +9,11 @@ on:
         type: string
 
 jobs:
+  skip:
+    if: ${{github.event.inputs.branches == '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: ls -l
   merge-branches:
     runs-on: ubuntu-latest
     env:
