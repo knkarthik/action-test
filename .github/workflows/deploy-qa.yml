@@ -21,17 +21,24 @@ jobs:
         id: create-branch
         continue-on-error: false
         run: |
-          INPUT_BRANCHES="$(echo -e "${{ github.event.inputs.branches }}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | tr -s ' ' | tr ',' ' ')"
+          INPUT_BRANCHES="$(echo -e "${{ github.event.inputs.branches }}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | tr ',' ' ' | tr -s ' ' )"
+          MERGED_BRANCHES=$(echo ${INPUT_BRANCHES/ /_})
           TIMESTAMP=$(date +'%Y%m%d%H%M%S')
-          NEW_BRANCH_NAME="merged-branches-${{ github.ref_name }}-$TIMESTAMP"
-          # Create a new branch from laster master
-          curl -X POST \
-            -H "Authorization: token $GH_TOKEN" \
-            -d '{
-              "ref": "refs/heads/'$NEW_BRANCH_NAME'",
-              "sha": "'$(curl -s -H "Authorization: token $GH_TOKEN" https://api.github.com/repos/$REPO_NAME/git/refs/heads/$BASE_BRANCH | jq -r '.object.sha')'"
-            }' \
-            "https://api.github.com/repos/$REPO_NAME/git/refs"
+          NEW_BRANCH_NAME="${{ github.ref_name }}_fitbot_merged_${MERGED_BRANCHES}_${TIMESTAMP}"
+          # Create a new branch from latest master
+          gh api \
+            --method POST \
+            repos/$REPO_NAME/git/refs \
+            --field ref="refs/heads/$NEW_BRANCH_NAME" \
+            --field sha=$(gh api repos/$REPO_NAME/git/refs/heads/$BASE_BRANCH --jq '.object.sha') \
+            --silent
+          # curl -X POST \
+          #   -H "Authorization: token $GH_TOKEN" \
+          #   -d '{
+          #     "ref": "refs/heads/'$NEW_BRANCH_NAME'",
+          #     "sha": "'$(curl -s -H "Authorization: token $GH_TOKEN" https://api.github.com/repos/$REPO_NAME/git/refs/heads/$BASE_BRANCH | jq -r '.object.sha')'"
+          #   }' \
+          #   "https://api.github.com/repos/$REPO_NAME/git/refs"
 
           echo "New branch name: $NEW_BRANCH_NAME"
           echo "Input branches: $INPUT_BRANCHES"
