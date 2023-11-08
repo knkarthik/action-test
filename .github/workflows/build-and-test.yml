@@ -22,76 +22,86 @@ jobs:
   build-base:
     runs-on: ubuntu-latest
     steps:
+      - name: Dump GitHub context
+        id: github_context_step
+        env:
+          JSON: ${{ toJSON(github) }}
+        run: echo $JSON
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: echo
-        run: echo "success"
-  build-ci:
-    needs: build-base
-    runs-on: ubuntu-latest
-    steps:
-      - name: echo
-        run: echo "success"
-  build-demo:
-    needs: build-base
-    runs-on: ubuntu-latest
-    steps:
-      - name: echo
-        run: echo "success"
-  brakeman:
-    needs: [build-ci]
-    runs-on: ubuntu-latest
-    steps:
-      - name: echo
-        run: echo "success"
-  rubocop:
-    needs: [build-ci]
-    runs-on: ubuntu-latest
-    steps:
-      - name: echo
-        run: echo "success"
-  ember-lint:
-    needs: [build-ci]
-    runs-on: ubuntu-latest
-    steps:
-      - name: echo
-        run: echo "success"
-  ember:
-    needs: [build-ci]
-    runs-on: ubuntu-latest
-    steps:
-      - name: echo
-        run: echo "success"
-  rspec:
-    needs: [build-ci]
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ci_node_total: [2]
-        ci_node_index: [0, 1]
-    steps:
-      - name: echo
-        run: echo "success"
-  acceptance:
-    needs: [build-ci]
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ci_node_total: [2]
-        ci_node_index: [0, 1]
-    steps:
-      - name: echo
-        run: echo "success"
-  sonarcloud:
-    needs: [build-ci, rspec]
-    runs-on: ubuntu-latest
-    steps:
-    - name: echo
-      run: echo "success"
-  cache-runtime:
-    runs-on: ubuntu-latest
-    needs: [rspec, acceptance]
-    steps:
-    - name: Process rspec parallel runtime files
-      run: echo "success"
+        run: |
+          git log --oneline -n 10
+  # build-ci:
+  #   needs: build-base
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: echo
+  #       run: echo "success"
+  # build-demo:
+  #   needs: build-base
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: echo
+  #       run: echo "success"
+  # brakeman:
+  #   needs: [build-ci]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: echo
+  #       run: echo "success"
+  # rubocop:
+  #   needs: [build-ci]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: echo
+  #       run: echo "success"
+  # ember-lint:
+  #   needs: [build-ci]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: echo
+  #       run: echo "success"
+  # ember:
+  #   needs: [build-ci]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: echo
+  #       run: echo "success"
+  # rspec:
+  #   needs: [build-ci]
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       ci_node_total: [2]
+  #       ci_node_index: [0, 1]
+  #   steps:
+  #     - name: echo
+  #       run: echo "success"
+  # acceptance:
+  #   needs: [build-ci]
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       ci_node_total: [2]
+  #       ci_node_index: [0, 1]
+  #   steps:
+  #     - name: echo
+  #       run: echo "success"
+  # sonarcloud:
+  #   needs: [build-ci, rspec]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: echo
+  #     run: echo "success"
+  # cache-runtime:
+  #   runs-on: ubuntu-latest
+  #   needs: [rspec, acceptance]
+  #   steps:
+  #   - name: Process rspec parallel runtime files
+  #     run: echo "success"
     
