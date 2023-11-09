@@ -41,6 +41,7 @@ jobs:
       - name: echo
         run: |
           any_changed=${{ steps.changed-files.outputs.any_modified }}
+          echo "Modified files are ${{ steps.changed-files.outputs.all_modified_files }}"
           echo $any_changed
           git log --oneline -n 10
           git diff --name-only 8a5cfed $GITHUB_SHA
