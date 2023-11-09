@@ -36,8 +36,8 @@ jobs:
         uses: tj-actions/changed-files@a0585ff9904b77d046192a7846e59783d6ea287b #v37
         with:
           files: |
-            ^Gemfile.lock
-            ^app/assets/**
+            Gemfile.lock
+            app/assets/**
       - name: echo
         run: |
           any_changed=${{ steps.changed-files.outputs.any_modified }}
