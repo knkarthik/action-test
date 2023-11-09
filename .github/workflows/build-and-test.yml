@@ -30,9 +30,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 2
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@a0585ff9904b77d046192a7846e59783d6ea287b #v37
+        with:
+          files: |
+            ^Gemfile.lock
+            ^app/assets/**
       - name: echo
         run: |
+          any_changed=${{ steps.changed-files.outputs.any_modified }}
+          echo $any_changed
           git log --oneline -n 10
           git diff --name-only 8a5cfed $GITHUB_SHA
   # build-ci:
