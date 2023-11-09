@@ -38,6 +38,7 @@ jobs:
           files: |
             Gemfile.lock
             app/assets/**
+            direct/**
       - name: echo
         run: |
           any_changed=${{ steps.changed-files.outputs.any_modified }}
