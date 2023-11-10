@@ -5,15 +5,20 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  push: 
-    branches-ignore:    
-      - 'main'
+  # push: 
+  #   branches-ignore:    
+  #     - 'main'
   workflow_call: 
     inputs:
       concurrency_key: 
         required: false
         type: string
         default: qa
+  workflow_dispatch:  
+    inputs:
+      percy_desktop: 
+        required: false
+        type: boolean
 env:
   BUNDLE_SILENCE_ROOT_WARNING: 1
   CI: "true"
@@ -22,76 +27,101 @@ jobs:
   build-base:
     runs-on: ubuntu-latest
     steps:
-      - name: echo
-        run: echo "success"
+      - name: Dump GitHub context
+        id: github_context_step
+        env:
+          JSON: ${{ toJSON(github) }}
+        run: echo $JSON && echo "SHOULD_BUILD_CI_IMAGE=false" >> GITHUB_OUTPUT
+      # - name: Checkout
+      #   uses: actions/checkout@v4
+      #   with:
+      #     fetch-depth: 2
+      # - name: Get changed files
+      #   id: changed-files
+      #   uses: tj-actions/changed-files@a0585ff9904b77d046192a7846e59783d6ea287b #v37
+      #   with:
+      #     files: |
+      #       Gemfile.lock
+      #       app/assets/**
+      #       direct/**
+      # - name: echo
+      #   run: |
+      #     any_changed=${{ steps.changed-files.outputs.any_modified }}
+      #     echo "Modified files are ${{ steps.changed-files.outputs.all_modified_files }}"
+      #     echo $any_changed
+      #     git log --oneline -n 10
+      #     git diff --name-only 8a5cfed $GITHUB_SHA
+      #     echo "SHOULD_BUILD_CI_IMAGE=false" >> GITHUB_OUTPUT
   build-ci:
     needs: build-base
+    if: ${{ needs.build-base.outputs.SHOULD_BUILD_CI_IMAGE == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: echo
         run: echo "success"
   build-demo:
-    needs: build-base
+    needs: [build-base, build-ci]
+    if: ${{ always() && !failure() && !cancelled() && inputs.percy_desktop }}
     runs-on: ubuntu-latest
     steps:
       - name: echo
         run: echo "success"
   brakeman:
-    needs: [build-ci]
+    needs: [build-base,build-demo]
     runs-on: ubuntu-latest
     steps:
       - name: echo
         run: echo "success"
-  rubocop:
-    needs: [build-ci]
-    runs-on: ubuntu-latest
-    steps:
-      - name: echo
-        run: echo "success"
-  ember-lint:
-    needs: [build-ci]
-    runs-on: ubuntu-latest
-    steps:
-      - name: echo
-        run: echo "success"
-  ember:
-    needs: [build-ci]
-    runs-on: ubuntu-latest
-    steps:
-      - name: echo
-        run: echo "success"
-  rspec:
-    needs: [build-ci]
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ci_node_total: [2]
-        ci_node_index: [0, 1]
-    steps:
-      - name: echo
-        run: echo "success"
-  acceptance:
-    needs: [build-ci]
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ci_node_total: [2]
-        ci_node_index: [0, 1]
-    steps:
-      - name: echo
-        run: echo "success"
-  sonarcloud:
-    needs: [build-ci, rspec]
-    runs-on: ubuntu-latest
-    steps:
-    - name: echo
-      run: echo "success"
-  cache-runtime:
-    runs-on: ubuntu-latest
-    needs: [rspec, acceptance]
-    steps:
-    - name: Process rspec parallel runtime files
-      run: echo "success"
+  # rubocop:
+  #   needs: [build-ci]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: echo
+  #       run: echo "success"
+  # ember-lint:
+  #   needs: [build-ci]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: echo
+  #       run: echo "success"
+  # ember:
+  #   needs: [build-ci]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: echo
+  #       run: echo "success"
+  # rspec:
+  #   needs: [build-ci]
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       ci_node_total: [2]
+  #       ci_node_index: [0, 1]
+  #   steps:
+  #     - name: echo
+  #       run: echo "success"
+  # acceptance:
+  #   needs: [build-ci]
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       ci_node_total: [2]
+  #       ci_node_index: [0, 1]
+  #   steps:
+  #     - name: echo
+  #       run: echo "success"
+  # sonarcloud:
+  #   needs: [build-ci, rspec]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: echo
+  #     run: echo "success"
+  # cache-runtime:
+  #   runs-on: ubuntu-latest
+  #   needs: [rspec, acceptance]
+  #   steps:
+  #   - name: Process rspec parallel runtime files
+  #     run: echo "success"
     

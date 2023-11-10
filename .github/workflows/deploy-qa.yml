@@ -4,58 +4,100 @@ on:
   workflow_dispatch: 
     inputs:
      branches:
-      description: "Branches to merge"
-      type: string
-
+        description: 'Other branches to merge (eg: AUT-123,xyz-1)'
+        required: false
+        type: string
+     DATABASE:
+        description: 'Copy data from master'
+        required: false
+        type: boolean
+     ENABLE_THIS:
+        description: 'Enable this'
+        required: false
+        type: boolean
+     TEST_RACK_ATTACK:
+        description: 'Enable Rack::Attack'
+        required: false
+        type: boolean
 jobs:
-  merge-branches:
+  skip_if_not_empty_branches:
+    if: ${{ github.event.inputs.branches == '' }}
     runs-on: ubuntu-latest
-
     steps:
+      - run: ls -l && echo ${{ github.ref_name }}
+  merge-branches:
+    if: ${{ github.event.inputs.branches != '' }}
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BASE_BRANCH: main
+      REPO_NAME: ${{ github.repository }}
+    steps:
+      
       - name: Check Out Code
         uses: actions/checkout@v4
-
       - name: Create New Branch
         id: create-branch
+        continue-on-error: false
         run: |
-          INPUT_BRANCHES="${{ github.event.inputs.branches }}"
-          INPUT_BRANCHES="$(echo -e "${INPUT_BRANCHES}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
-          TIMESTAMP=$(date +'%Y%m%d%H%M%S')
-          NEW_BRANCH_NAME="merged-branches-${{ github.ref_name }}-$TIMESTAMP"
-          BASE_BRANCH=${{ github.ref_name }}
-          ACCESS_TOKEN="$GITHUB_TOKEN"
-          REPO_OWNER=${{ github.repository_owner }}
-          REPO_NAME=${{ github.repository }}
-
-          # Create a new branch using the GitHub API
-          curl -X POST \
-            -H "Authorization: token $ACCESS_TOKEN" \
-            -d '{
-              "ref": "refs/heads/'$NEW_BRANCH_NAME'",
-              "sha": "'$(curl -s -H "Authorization: token $ACCESS_TOKEN" https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/git/refs/heads/$BASE_BRANCH | jq -r '.object.sha')'"
-            }' \
-            "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/git/refs"
-
+          INPUT_BRANCHES="$(echo -e "${{ github.event.inputs.branches }}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | tr ',' ' ' | tr -s ' ' )"
+          merged_branches=$(echo ${INPUT_BRANCHES/ /_})
+          timestamp=$(date +'%Y%m%d%H%M%S')
+          temp_branch_name="${{ github.ref_name }}_fitbot_merged_${merged_branches}_${timestamp}"
+          NEW_BRANCH_NAME="${temp_branch_name:0:100}"
+          # Create a new branch from latest master
+          gh api \
+            --method POST \
+            repos/$REPO_NAME/git/refs \
+            --field ref="refs/heads/$NEW_BRANCH_NAME" \
+            --field sha=$(gh api repos/$REPO_NAME/git/refs/heads/$BASE_BRANCH --jq '.object.sha') \
+            --silent
           echo "New branch name: $NEW_BRANCH_NAME"
           echo "Input branches: $INPUT_BRANCHES"
+          echo "INPUT_BRANCHES=$INPUT_BRANCHES" >> $GITHUB_OUTPUT
+          echo "NEW_BRANCH_NAME=$NEW_BRANCH_NAME" >> $GITHUB_OUTPUT
+        
+      - name: Merge Branches
+        id: merge-branches
         continue-on-error: false
-
-      # - name: Merge Branches
-      #   run: |
-      #     INPUT_BRANCHES=${{ github.event.inputs.branches }}
-      #     for BRANCH in $INPUT_BRANCHES
-      #     do
-      #       # Merge branches using the GitHub API and `gh` CLI
-      #       gh api -X PUT "repos/$GITHUB_REPOSITORY/merges" -F base="$NEW_BRANCH_NAME" -F head="$BRANCH"
-      #       if [ $? -ne 0 ]
-      #       then
-      #         echo "Merge conflict or failure detected. Deleting the new branch."
-      #         git push origin --delete $NEW_BRANCH_NAME
-      #         exit 1
-      #       fi
-      #     done
-      #     echo "All branches merged successfully."
-
+        shell: bash -l {0}
+        run: |
+          BRANCHES_TO_MERGE="${{ github.ref_name }} ${{ steps.create-branch.outputs.INPUT_BRANCHES }}"
+          NEW_BRANCH_NAME=${{ steps.create-branch.outputs.NEW_BRANCH_NAME }}
+          echo "New branch name: $NEW_BRANCH_NAME"
+          echo "Branches to merge: $BRANCHES_TO_MERGE"
+          # Merge branches          
+          for BRANCH in $BRANCHES_TO_MERGE
+          do
+            echo "Merging $BRANCH"
+            gh api \
+              --method POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              /repos/$REPO_NAME/merges \
+              -f base="$NEW_BRANCH_NAME" \
+              -f head="$BRANCH" \
+              -f commit_message="Merge $BRANCH [skip ci]" \
+              --silent 
+            if [[ $? -ne 0 ]]
+            then
+              echo "Merge conflict or failure detected while merging $BRANCH."
+              gh api -X DELETE "repos/$REPO_NAME/git/refs/heads/$NEW_BRANCH_NAME"
+              exit 1
+            fi
+          done
+          echo "All branches merged successfully."
+          echo "NEW_BRANCH_NAME=$NEW_BRANCH_NAME" >> $GITHUB_OUTPUT
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.create-branch.outputs.NEW_BRANCH_NAME }}
+      - name: Trigger deploy for branch ${{ steps.create-branch.outputs.NEW_BRANCH_NAME }}
+        run: |
+           echo "Workflow was triggered with: ${{toJson(github.event.inputs)}}" 
+           echo '${{toJson(github.event.inputs)}}' | jq 'del(.branches)' | gh workflow run deploy-qa.yml --ref ${{ steps.create-branch.outputs.NEW_BRANCH_NAME }}
+           echo "### Triggered a new QA deploy workflow! :rocket:" >> $GITHUB_STEP_SUMMARY
+           echo "Checkout the [workflow runs](https://github.com/knkarthik/action-test/actions/workflows/deploy-qa.yml?query=actor%3Agithub-actions+branch%3A${{ steps.create-branch.outputs.NEW_BRANCH_NAME }})" >> $GITHUB_STEP_SUMMARY
       # - name: Push Merged Branch
       #   run: |
       #     git push origin $NEW_BRANCH_NAME
