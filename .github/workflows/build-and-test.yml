@@ -65,10 +65,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: echo
-        run: echo "success"
+        run: echo "success" && echo "finalize=true" >> GITHUB_OUTPUT
   brakeman:
     needs: [build-base, build-demo]
-    if: ${{ needs.build-demo.result == 'success' && github.event.inputs.percy_desktop == 'true' }}
+    if: ${{ needs.build-demo.outputs.finalize == 'true' && github.event.inputs.percy_desktop == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: echo
