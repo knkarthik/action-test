@@ -61,14 +61,14 @@ jobs:
         run: echo "success"
   build-demo:
     needs: [build-base, build-ci]
-    if: ${{ always() && !failure() && !cancelled() && github.event.inputs.percy_desktop == 'true' }}
+    if: always() && !failure() && !cancelled() && github.event.inputs.percy_desktop == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: echo
         run: echo "success" && echo "finalize=true" >> GITHUB_OUTPUT
   brakeman:
     needs: [build-base, build-demo]
-    if: ${{ always() && !failure() && !cancelled() && needs.build-demo.outputs.finalize == 'true' && github.event.inputs.percy_desktop == 'true' }}
+    if: always() && !failure() && !cancelled() && github.event.inputs.percy_desktop == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: echo
