@@ -68,7 +68,7 @@ jobs:
         run: echo "success"
   brakeman:
     needs: [build-base, build-demo]
-    if: ${{ github.event.inputs.percy_desktop == 'true' }}
+    if: ${{ needs.build-demo.result == 'success' && github.event.inputs.percy_desktop == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: echo
