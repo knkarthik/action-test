@@ -61,14 +61,14 @@ jobs:
         run: echo "success"
   build-demo:
     needs: [build-base, build-ci]
-    if: ${{ always() && !failure() && !cancelled() && inputs.percy_desktop }}
+    if: ${{ always() && !failure() && !cancelled() && github.event.inputs.percy_desktop == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: echo
         run: echo "success"
   brakeman:
     needs: [build-demo]
-    if: inputs.percy_desktop
+    if: github.event.inputs.percy_desktop == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: echo
