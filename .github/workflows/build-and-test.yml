@@ -68,6 +68,7 @@ jobs:
         run: echo "success"
   brakeman:
     needs: [build-base,build-demo]
+    if: inputs.percy_desktop
     runs-on: ubuntu-latest
     steps:
       - name: echo
