@@ -12,10 +12,10 @@ on:
   workflow_dispatch: 
     inputs:
       deploy:
-        desription: "Check to deploy latest master to production :information_source:"
+        desription: "Check to deploy latest master to production 🍄 :mushroom:"
         type: string
       test_push:
-        desription: "simulate push event to test :mushroom:"
+        desription: "simulate push event to test 🍄 :mushroom:"
         type: boolean
       # ONETIMER_NAME:
       #   type: string
