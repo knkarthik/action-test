@@ -13,7 +13,7 @@ on:
     inputs:
       deploy:
         desription: "Check to deploy latest master to production [Info](https://www.google.com)"
-        type: boolean
+        type: string
       test_push:
         desription: "simulate push event to test"
         type: boolean
