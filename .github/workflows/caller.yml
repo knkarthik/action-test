@@ -12,7 +12,7 @@ on:
   workflow_dispatch: 
     inputs:
       deploy:
-        desription: "Check to deploy latest master to production"
+        desription: "Check to deploy latest master to production [Info](https://www.google.com)"
         type: boolean
       test_push:
         desription: "simulate push event to test"
