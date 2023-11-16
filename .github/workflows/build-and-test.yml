@@ -18,7 +18,7 @@ jobs:
           OWNER: knkarthik
           REPO: action-test
           SECRET_NAME: test_secret
-          : foobar
+          SECRET_VALUE: foobar
         with:
           github-token: ${{ secrets.DEP_PAT_TEST }}
           script: |
@@ -41,5 +41,4 @@ jobs:
             let encBytes = sodium.crypto_box_seal(binsec, binkey)
             let output = sodium.to_base64(encBytes, sodium.base64_variants.ORIGINAL)
             console.log(output)
-          
           
