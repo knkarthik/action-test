@@ -26,7 +26,7 @@ jobs:
             const SECRET = process.env.SECRET
             const _sodium = require('libsodium-wrappers')
             
-            const key = await github.rest.dependabot.getRepoPublicKey({
+            const data = await github.rest.dependabot.getRepoPublicKey({
               owner: OWNER,
               repo: REPO,
             });
@@ -39,7 +39,7 @@ jobs:
               console.log(data.key)
               console.log(SECRET)
               // Convert the secret and key to a Uint8Array.
-              let binkey = sodium.from_base64(key, sodium.base64_variants.ORIGINAL)
+              let binkey = sodium.from_base64(data.key, sodium.base64_variants.ORIGINAL)
               let binsec = sodium.from_string(SECRET)
 
               // Encrypt the secret using libsodium
