@@ -24,7 +24,7 @@ jobs:
             const OWNER = process.env.OWNER
             const REPO = process.env.REPO
             const SECRET = process.env.SECRET
-            const _sodium = require('libsodium-wrappers')
+            const sodium = require('libsodium-wrappers')
             
             const data = await github.rest.dependabot.getRepoPublicKey({
               owner: OWNER,
@@ -33,32 +33,29 @@ jobs:
 
             console.log("key printed")
             let encrypted = ''
+            //Check if libsodium is ready and then proceed.
             sodium.ready.then(() => {
-              console.log("Convert the secret and key to a Uint8Array.")
               console.log(data)
-              console.log(data.key)
-              console.log(SECRET)
+              console.log(data['key'])
+              let key = data['key']s
               // Convert the secret and key to a Uint8Array.
-              let binkey = sodium.from_base64(data.key, sodium.base64_variants.ORIGINAL)
+              let binkey = sodium.from_base64(key, sodium.base64_variants.ORIGINAL)
               let binsec = sodium.from_string(SECRET)
 
               // Encrypt the secret using libsodium
               let encBytes = sodium.crypto_box_seal(binsec, binkey)
-              
+
               // Convert the encrypted Uint8Array to Base64
-              encrypted = sodium.to_base64(encBytes, sodium.base64_variants.ORIGINAL)
-             
+              let output = sodium.to_base64(encBytes, sodium.base64_variants.ORIGINAL)
+
               // Print the output
-            
-              console.log(encrypted)
-              resp = github.rest.dependabot.createOrUpdateRepoSecret({
+              console.log(output)
+            });
+            resp = github.rest.dependabot.createOrUpdateRepoSecret({
               owner: OWNER,
               repo: REPO,
               secret_name: "DEPENDABOT_SECRET",
               encrypted_value: encrypted
             });
             
-            console.log(resp)
-            )};
-
             
