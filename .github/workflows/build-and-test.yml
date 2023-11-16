@@ -36,7 +36,7 @@ jobs:
             await _sodium.ready
             const sodium = _sodium;
               console.log("Convert the secret and key to a Uint8Array.")
-              console.log(key.key)
+              console.log(key)
               console.log(SECRET)
               // Convert the secret and key to a Uint8Array.
               let binkey = sodium.from_base64(key, sodium.base64_variants.ORIGINAL)
