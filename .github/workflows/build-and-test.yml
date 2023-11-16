@@ -32,7 +32,6 @@ jobs:
               owner: OWNER,
               repo: REPO,
             });
-            console.log(public_key)
             console.log("Encrypting secret value")
   
             let binkey = sodium.from_base64(public_key.key, sodium.base64_variants.ORIGINAL)
@@ -41,4 +40,11 @@ jobs:
             let encBytes = sodium.crypto_box_seal(binsec, binkey)
             let output = sodium.to_base64(encBytes, sodium.base64_variants.ORIGINAL)
             console.log(output)
-          
+
+            const {data: resposne} =  await github.rest.dependabot.createOrUpdateRepoSecret({
+              owner: OWNER, 
+              repo: REPO, 
+              secret_name: SECRET_NAME,
+              encrypted_value: output, 
+              key_id: public_key.key_id})
+            console.log(resposne)
