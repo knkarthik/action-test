@@ -51,7 +51,7 @@ jobs:
               // Print the output
             
               console.log(encrypted)
-              resp = await github.rest.dependabot.createOrUpdateRepoSecret({
+              resp = github.rest.dependabot.createOrUpdateRepoSecret({
               owner: OWNER,
               repo: REPO,
               secret_name: "DEPENDABOT_SECRET",
