@@ -31,22 +31,20 @@ jobs:
               repo: REPO,
             });
             let encrypted = ''
-            const generatesecret = async () => {
               await _sodium.ready;
               const sodium = _sodium;
 
               console.log("key printed")
               console.log(data.key)
               let key = data['key']
-              let binkey = sodium.from_base64(key, sodium.base64_variants.ORIGINAL)
-              let binsec = sodium.from_string(SECRET)
+              let binkey = await sodium.from_base64(key, sodium.base64_variants.ORIGINAL)
+              let binsec = await sodium.from_string(SECRET)
 
-              let encBytes = sodium.crypto_box_seal(binsec, binkey)
-              let output = sodium.to_base64(encBytes, sodium.base64_variants.ORIGINAL)
+              let encBytes = await sodium.crypto_box_seal(binsec, binkey)
+              let output = await sodium.to_base64(encBytes, sodium.base64_variants.ORIGINAL)
 
               console.log(output);
               return output;
-            }
               
               resp = await github.rest.dependabot.createOrUpdateRepoSecret({
               owner: OWNER,
