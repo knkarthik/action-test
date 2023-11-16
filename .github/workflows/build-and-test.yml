@@ -31,10 +31,11 @@ jobs:
               repo: REPO,
             });
 
-            console.log("key printed")
+            
             let encrypted = ''
             //Check if libsodium is ready and then proceed.
-            sodium.ready.then(() => {
+            await sodium.ready.then(() => {
+              console.log("key printed")
               console.log(data)
               console.log(data['key'])
               let key = data['key']
@@ -51,7 +52,7 @@ jobs:
               // Print the output
               console.log(output)
             });
-            resp = github.rest.dependabot.createOrUpdateRepoSecret({
+            resp = await github.rest.dependabot.createOrUpdateRepoSecret({
               owner: OWNER,
               repo: REPO,
               secret_name: "DEPENDABOT_SECRET",
