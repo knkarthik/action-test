@@ -1,127 +1,64 @@
-name: Build and test
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}-${{ inputs.concurrency_key }}
-  cancel-in-progress: true
-
-on:
-  # push: 
-  #   branches-ignore:    
-  #     - 'main'
-  workflow_call: 
-    inputs:
-      concurrency_key: 
-        required: false
-        type: string
-        default: qa
-  workflow_dispatch:  
-    inputs:
-      percy_desktop: 
-        required: false
-        type: boolean
-env:
-  BUNDLE_SILENCE_ROOT_WARNING: 1
-  CI: "true"
+name: dependabot
+on: push
 
 jobs:
-  build-base:
+  echo-input:
     runs-on: ubuntu-latest
+    permissions: write-all
     steps:
-      - name: Dump GitHub context
-        id: github_context_step
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+      # - run: npm ci
+      # or one-off:
+      - run: npm install libsodium-wrappers
+      - uses: actions/github-script@v7
         env:
-          JSON: ${{ toJSON(github) }}
-        run: echo $JSON && echo "SHOULD_BUILD_CI_IMAGE=false" >> GITHUB_OUTPUT
-      # - name: Checkout
-      #   uses: actions/checkout@v4
-      #   with:
-      #     fetch-depth: 2
-      # - name: Get changed files
-      #   id: changed-files
-      #   uses: tj-actions/changed-files@a0585ff9904b77d046192a7846e59783d6ea287b #v37
-      #   with:
-      #     files: |
-      #       Gemfile.lock
-      #       app/assets/**
-      #       direct/**
-      # - name: echo
-      #   run: |
-      #     any_changed=${{ steps.changed-files.outputs.any_modified }}
-      #     echo "Modified files are ${{ steps.changed-files.outputs.all_modified_files }}"
-      #     echo $any_changed
-      #     git log --oneline -n 10
-      #     git diff --name-only 8a5cfed $GITHUB_SHA
-      #     echo "SHOULD_BUILD_CI_IMAGE=false" >> GITHUB_OUTPUT
-  build-ci:
-    needs: build-base
-    if: ${{ needs.build-base.outputs.SHOULD_BUILD_CI_IMAGE == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: echo
-        run: echo "success"
-  build-demo:
-    needs: [build-base, build-ci]
-    if: ${{ always() && !failure() && !cancelled() && inputs.percy_desktop }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: echo
-        run: echo "success"
-  brakeman:
-    needs: [build-base,build-demo]
-    runs-on: ubuntu-latest
-    steps:
-      - name: echo
-        run: echo "success"
-  # rubocop:
-  #   needs: [build-ci]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: echo
-  #       run: echo "success"
-  # ember-lint:
-  #   needs: [build-ci]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: echo
-  #       run: echo "success"
-  # ember:
-  #   needs: [build-ci]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: echo
-  #       run: echo "success"
-  # rspec:
-  #   needs: [build-ci]
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       ci_node_total: [2]
-  #       ci_node_index: [0, 1]
-  #   steps:
-  #     - name: echo
-  #       run: echo "success"
-  # acceptance:
-  #   needs: [build-ci]
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       ci_node_total: [2]
-  #       ci_node_index: [0, 1]
-  #   steps:
-  #     - name: echo
-  #       run: echo "success"
-  # sonarcloud:
-  #   needs: [build-ci, rspec]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - name: echo
-  #     run: echo "success"
-  # cache-runtime:
-  #   runs-on: ubuntu-latest
-  #   needs: [rspec, acceptance]
-  #   steps:
-  #   - name: Process rspec parallel runtime files
-  #     run: echo "success"
-    
+          OWNER: knkarthik
+          REPO: action-test
+          SECRET: supersecret
+        with:
+          github-token: ${{ secrets.DEP_PAT_TEST }}
+          script: |
+            const OWNER = process.env.OWNER
+            const REPO = process.env.REPO
+            const SECRET = process.env.SECRET
+            const sodium = require('libsodium-wrappers')
+            
+            const key = await github.rest.dependabot.getRepoPublicKey({
+              owner: OWNER,
+              repo: REPO,
+            });
+
+            console.log("key printed")
+            let encrypted = ''
+            //Check if libsodium is ready and then proceed.
+            sodium.ready.then(() => {
+              console.log("Convert the secret and key to a Uint8Array.")
+              console.log(key)
+              console.log(SECRET)
+              // Convert the secret and key to a Uint8Array.
+              let binkey = sodium.from_base64(key, sodium.base64_variants.ORIGINAL)
+              let binsec = sodium.from_string(SECRET)
+
+              // Encrypt the secret using libsodium
+              let encBytes = sodium.crypto_box_seal(binsec, binkey)
+              
+              // Convert the encrypted Uint8Array to Base64
+              encrypted = sodium.to_base64(encBytes, sodium.base64_variants.ORIGINAL)
+             
+              // Print the output
+            
+              console.log(encrypted)
+              resp = github.rest.dependabot.createOrUpdateRepoSecret({
+              owner: OWNER,
+              repo: REPO,
+              secret_name: "DEPENDABOT_SECRET",
+              encrypted_value: encrypted
+            });
+            
+            console.log(resp)
+            });
+
+            
