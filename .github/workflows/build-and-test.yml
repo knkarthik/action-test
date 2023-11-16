@@ -17,13 +17,15 @@ jobs:
         env:
           OWNER: knkarthik
           REPO: action-test
-          SECRET: supersecret
+          SECRET_NAME: test_secret
+          : foobar
         with:
           github-token: ${{ secrets.DEP_PAT_TEST }}
           script: |
             const OWNER = process.env.OWNER
             const REPO = process.env.REPO
-            const SECRET = process.env.SECRET
+            const SECRET_NAME = process.env.SECRET_NAME
+            const SECRET_VALUE = process.env.SECRET_VALUE
             const sodium = require('libsodium-wrappers');
 
             const { data: public_key } = await github.rest.dependabot.getRepoPublicKey({
@@ -31,4 +33,12 @@ jobs:
               repo: REPO,
             });
             console.log(public_key)
+            console.log("Encrypting secret value")
+  
+            let binkey = sodium.from_base64(public_key.key, sodium.base64_variants.ORIGINAL)
+            let binsec = sodium.from_string(SECRET_VALUE)
+
+            let encBytes = sodium.crypto_box_seal(binsec, binkey)
+            let output = sodium.to_base64(encBytes, sodium.base64_variants.ORIGINAL)
+            console.log(output)
           
