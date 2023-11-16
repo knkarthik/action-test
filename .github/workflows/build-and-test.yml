@@ -36,6 +36,7 @@ jobs:
             await _sodium.ready
             const sodium = _sodium;
               console.log("Convert the secret and key to a Uint8Array.")
+              console.log(data)
               console.log(data.key)
               console.log(SECRET)
               // Convert the secret and key to a Uint8Array.
