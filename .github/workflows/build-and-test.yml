@@ -56,5 +56,3 @@ jobs:
               encrypted_value: await generatesecret()
               });
             
-            
-            
