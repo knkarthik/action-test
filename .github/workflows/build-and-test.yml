@@ -25,28 +25,29 @@ jobs:
             const REPO = process.env.REPO
             const SECRET = process.env.SECRET
             const sodium = require('libsodium-wrappers');
-            await sodium.ready;
-            const data = await github.rest.dependabot.getRepoPublicKey({
+
+            const { data: public_key } = await github.rest.dependabot.getRepoPublicKey({
               owner: OWNER,
               repo: REPO,
             });
-            let encrypted = ''
-              console.log("key printed")
-              console.log(data.key)
-              let key = data['key']
-              let binkey = await sodium.from_base64(key, sodium.base64_variants.ORIGINAL)
-              let binsec = await sodium.from_string(SECRET)
+            console.log(public_key)
+            # console.log("key printed")
+            # console.log(public_key.key)
+            # let key = data.key
+            # let binkey = await sodium.from_base64(key, sodium.base64_variants.ORIGINAL)
+            # let binsec = await sodium.from_string(SECRET)
 
-              let encBytes = await sodium.crypto_box_seal(binsec, binkey)
-              let output = await sodium.to_base64(encBytes, sodium.base64_variants.ORIGINAL)
+            # let encBytes = await sodium.crypto_box_seal(binsec, binkey)
+            # let output = await sodium.to_base64(encBytes, sodium.base64_variants.ORIGINAL)
 
-              console.log(output);
-              return output;
-              
-              resp = await github.rest.dependabot.createOrUpdateRepoSecret({
-              owner: OWNER,
-              repo: REPO,
-              secret_name: "DEPENDABOT_SECRET",
-              encrypted_value: await generatesecret()
-              });
+            # console.log(output);
+            
+            # # resp = await github.rest.dependabot.createOrUpdateRepoSecret({
+            # # owner: OWNER,
+            # # repo: REPO,
+            # # secret_name: "DEPENDABOT_SECRET",
+            # # encrypted_value: await generatesecret()
+            # # });
+            
+            
             
