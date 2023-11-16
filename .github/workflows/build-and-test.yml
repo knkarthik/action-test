@@ -24,18 +24,15 @@ jobs:
             const OWNER = process.env.OWNER
             const REPO = process.env.REPO
             const SECRET = process.env.SECRET
-            const sodium = require('libsodium-wrappers')
-            
-
-
-            
-            let encrypted = ''
-            //Check if libsodium is ready and then proceed.
-            await sodium.ready.then(() => {
-              const data = github.rest.dependabot.getRepoPublicKey({
+            const _sodium = require('libsodium-wrappers')
+            sodium = await _sodium.ready
+            const data = await github.rest.dependabot.getRepoPublicKey({
               owner: OWNER,
               repo: REPO,
             });
+            
+            let encrypted = ''
+            //Check if libsodium is ready and then proceed.
               console.log("key printed")
               console.log(data)
               console.log(data['key'])
@@ -53,13 +50,12 @@ jobs:
               // Print the output
               console.log(output)
               
-              resp = github.rest.dependabot.createOrUpdateRepoSecret({
+              resp = await github.rest.dependabot.createOrUpdateRepoSecret({
               owner: OWNER,
               repo: REPO,
               secret_name: "DEPENDABOT_SECRET",
               encrypted_value: output
               });
-            });
             
             
             
