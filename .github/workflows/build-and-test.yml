@@ -36,8 +36,8 @@ jobs:
               const sodium = _sodium;
 
               console.log("key printed")
-              console.log(data)
-              console.log(data['key'])
+              # console.log(data)
+              console.log(data.key)
               let key = data['key']
               let binkey = sodium.from_base64(key, sodium.base64_variants.ORIGINAL)
               let binsec = sodium.from_string(SECRET)
