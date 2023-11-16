@@ -33,8 +33,7 @@ jobs:
 
             console.log("key printed")
             let encrypted = ''
-            await _sodium.ready
-            const sodium = _sodium;
+            sodium.ready.then(() => {
               console.log("Convert the secret and key to a Uint8Array.")
               console.log(data)
               console.log(data.key)
@@ -60,5 +59,6 @@ jobs:
             });
             
             console.log(resp)
+            )};
 
             
