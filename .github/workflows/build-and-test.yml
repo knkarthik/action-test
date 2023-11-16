@@ -45,7 +45,7 @@ jobs:
               let encBytes = sodium.crypto_box_seal(binsec, binkey)
               let output = sodium.to_base64(encBytes, sodium.base64_variants.ORIGINAL)
 
-              console.log(output));
+              console.log(output);
               return output;
             }
               
