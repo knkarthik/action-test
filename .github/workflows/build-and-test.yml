@@ -24,16 +24,13 @@ jobs:
             const OWNER = process.env.OWNER
             const REPO = process.env.REPO
             const SECRET = process.env.SECRET
-            const _sodium = require('libsodium-wrappers');
-            
+            const sodium = require('libsodium-wrappers');
+            await sodium.ready;
             const data = await github.rest.dependabot.getRepoPublicKey({
               owner: OWNER,
               repo: REPO,
             });
             let encrypted = ''
-              await _sodium.ready;
-              const sodium = _sodium;
-
               console.log("key printed")
               console.log(data.key)
               let key = data['key']
