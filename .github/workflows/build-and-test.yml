@@ -26,7 +26,6 @@ env:
 jobs:
   build-base:
     runs-on: ubuntu-latest
-    environment: prod
     steps:
       - name: Dump GitHub context
         id: github_context_step
@@ -55,7 +54,8 @@ jobs:
       #     echo "SHOULD_BUILD_CI_IMAGE=false" >> GITHUB_OUTPUT
   build-ci:
     needs: build-base
-    if: ${{ needs.build-base.outputs.SHOULD_BUILD_CI_IMAGE == 'true' }}
+    environment: prod
+    # if: ${{ needs.build-base.outputs.SHOULD_BUILD_CI_IMAGE == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: echo
