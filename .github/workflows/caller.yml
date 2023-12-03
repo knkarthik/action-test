@@ -8,6 +8,7 @@ on:
   push:
     branches-ignore:
       - main
+      - tj-test
   pull_request:
   workflow_dispatch: 
     inputs:
