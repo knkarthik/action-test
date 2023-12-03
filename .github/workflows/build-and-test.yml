@@ -5,6 +5,9 @@ concurrency:
   cancel-in-progress: true
 
 on:
+  push:
+    branches: 
+     - tj-test
   # push: 
   #   branches-ignore:    
   #     - 'main'
@@ -32,48 +35,56 @@ jobs:
         env:
           JSON: ${{ toJSON(github) }}
         run: echo $JSON && echo "SHOULD_BUILD_CI_IMAGE=false" >> GITHUB_OUTPUT
-      # - name: Checkout
-      #   uses: actions/checkout@v4
-      #   with:
-      #     fetch-depth: 2
-      # - name: Get changed files
-      #   id: changed-files
-      #   uses: tj-actions/changed-files@a0585ff9904b77d046192a7846e59783d6ea287b #v37
-      #   with:
-      #     files: |
-      #       Gemfile.lock
-      #       app/assets/**
-      #       direct/**
-      # - name: echo
-      #   run: |
-      #     any_changed=${{ steps.changed-files.outputs.any_modified }}
-      #     echo "Modified files are ${{ steps.changed-files.outputs.all_modified_files }}"
-      #     echo $any_changed
-      #     git log --oneline -n 10
-      #     git diff --name-only 8a5cfed $GITHUB_SHA
-      #     echo "SHOULD_BUILD_CI_IMAGE=false" >> GITHUB_OUTPUT
-  build-ci:
-    needs: build-base
-    environment: prod
-    # if: ${{ needs.build-base.outputs.SHOULD_BUILD_CI_IMAGE == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@a0585ff9904b77d046192a7846e59783d6ea287b #v37
+        with:
+          files_yaml: |
+            rb:
+              - Gemfile.lock
+            js:
+              - app/assets/**
+              - direct/**
       - name: echo
-        run: echo "success"
-  build-demo:
-    needs: [build-base, build-ci]
-    if: always() && !failure() && !cancelled() && github.event.inputs.percy_desktop == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: echo
-        run: echo "success" && echo "finalize=true" >> GITHUB_OUTPUT
-  brakeman:
-    needs: [build-base, build-demo]
-    if: always() && !failure() && !cancelled() && github.event.inputs.percy_desktop == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: echo
-        run: echo "success"
+        run: |
+          
+          rb_any_changed=${{ steps.changed-files.outputs.rb_any_modified }}
+          js_any_changed=${{ steps.changed-files.outputs.js_any_modified }}
+          echo "rb_any_changed: $rb_any_changed"
+          echo "js_any_changed: $js_any_changed"
+          
+          echo "Modified files are ${{ steps.changed-files.outputs.all_modified_files }}"
+          
+          any_changed=${{ steps.changed-files.outputs.any_modified }}
+          echo "any_changed: $any_changed"
+          
+          git log --oneline -n 10
+          git diff --name-only 8a5cfed $GITHUB_SHA
+          echo "SHOULD_BUILD_CI_IMAGE=false" >> GITHUB_OUTPUT
+  # build-ci:
+  #   needs: build-base
+  #   environment: prod
+  #   # if: ${{ needs.build-base.outputs.SHOULD_BUILD_CI_IMAGE == 'true' }}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: echo
+  #       run: echo "success"
+  # build-demo:
+  #   needs: [build-base, build-ci]
+  #   if: always() && !failure() && !cancelled() && github.event.inputs.percy_desktop == 'true'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: echo
+  #       run: echo "success" && echo "finalize=true" >> GITHUB_OUTPUT
+  # brakeman:
+  #   needs: [build-base, build-demo]
+  #   if: always() && !failure() && !cancelled() && github.event.inputs.percy_desktop == 'true'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: echo
+  #       run: echo "success"
   # rubocop:
   #   needs: [build-ci]
   #   runs-on: ubuntu-latest
