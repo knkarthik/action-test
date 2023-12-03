@@ -41,13 +41,13 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@a0585ff9904b77d046192a7846e59783d6ea287b #v37
         with:
-          fetch_depth: 10
+          fetch_depth: 2
           files_yaml: |
-            rb:
-              - Gemfile.lock
             js:
               - app/assets/**
               - direct/**
+            rb:
+              - Gemfile.lock
       - name: echo
         run: |
           
