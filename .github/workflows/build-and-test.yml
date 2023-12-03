@@ -42,7 +42,7 @@ jobs:
         uses: tj-actions/changed-files@a0585ff9904b77d046192a7846e59783d6ea287b #v37
         with:
           fetch_depth: 10
-          base_sha: "HEAD~10"
+          base_sha: 'HEAD~9'
           files_yaml: |
             js:
               - app/assets/**
