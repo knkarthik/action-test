@@ -20,6 +20,7 @@ jobs:
   test-job:
     runs-on: ubuntu-latest
     needs: ['call']
+    if: NEEDS.call.result == 'failure'
     env:
       JSON: ${{ toJSON(github) }}
       NEEDS: ${{ toJSON(needs) }}
@@ -27,5 +28,4 @@ jobs:
       GH_TOKEN: ${{ secrets.READ_CLEARSPELL_VARIABLES }}
     steps:
       - run: echo $JSON
-      - run: echo $NEEDS
-      - run: echo ${{ toJSON(job) }}    
+      - run: echo $NEEDS  
