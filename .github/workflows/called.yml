@@ -35,4 +35,4 @@ jobs:
         with:
           ref: ${{ inputs.ref }}
       - name: Dump GitHub
-        run: ls -la && exit 1
+        run: ls -la
