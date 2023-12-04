@@ -23,9 +23,9 @@ jobs:
     env:
       JSON: ${{ toJSON(github) }}
       NEEDS: ${{ toJSON(needs) }}
-      JOB: ${{ toJSON(job) }}
+      # JOB: ${{ toJSON(job) }}
       GH_TOKEN: ${{ secrets.READ_CLEARSPELL_VARIABLES }}
     steps:
       - run: echo $JSON
       - run: echo $NEEDS
-      - run: echo $JOB    
+      - run: echo ${{ toJSON(job) }}    
