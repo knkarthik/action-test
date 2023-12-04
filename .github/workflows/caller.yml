@@ -20,7 +20,7 @@ jobs:
   test-job:
     runs-on: ubuntu-latest
     needs: ['call']
-    if: needs.call.result == 'failure'
+    if: ${{ failure() && needs.call.result == 'failure' }}
     env:
       JSON: ${{ toJSON(github) }}
       NEEDS: ${{ toJSON(needs) }}
