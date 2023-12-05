@@ -36,6 +36,8 @@ jobs:
       - name: List Failed Jobs
         id: list-failed-jobs
         uses: actions/github-script@v7
+        env:
+          branch: ${{ github.ref_name }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -59,7 +61,7 @@ jobs:
               type: 'section',
               text: {
                 type: 'mrkdwn',
-                text: `<${context.payload.repository.html_url}/actions/runs/${context.runId}|Workflow run> failed for *${context.ref_name}* :red_circle:`,
+                text: `<${context.payload.repository.html_url}/actions/runs/${context.runId}|Workflow run> failed for *${process.env.branch}* :red_circle:`,
               },
             };
             const failedJobBlocks = [{
