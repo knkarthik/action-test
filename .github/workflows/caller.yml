@@ -49,7 +49,7 @@ jobs:
             const failedJobLinks = failedJobs.map(job => `<${job.html_url}|${job.name}>`);
             const branchName = context.ref_name;
             console.log(context.runId)
-            console.log(`${context.payload.repository.html_url/actions/runs/${context.run_id}`)
+            console.log(`${context.payload.repository.html_url}/actions/runs/${context.run_id}`)
             const workflowHeader = {
               type: 'section',
               text: {
