@@ -47,8 +47,10 @@ jobs:
             const failedJobs = data.jobs.filter(job => job.conclusion === 'failure');
             console.log(failedJobs);
             const failedJobLinks = failedJobs.map(job => `<${job.html_url}|${job.name}>`);
-            const branchName = context.ref.replace('refs/heads/', '');
+            const branchName = context.ref_name;
             const run_url = `${context.server_url}/${context.repository}/actions/runs/${context.run_id}`
+            cosole.log(context)
+            console.log(run_url)
             const workflowHeader = {
               type: 'section',
               text: {
@@ -60,7 +62,8 @@ jobs:
               type: 'section',
               text: {
                 type: 'mrkdwn',
-                text: `Failed jobs: ${failedJobLinks.join(', ')}`
+                text: `Failed jobs: ${failedJobLinks.join(', ')}`,
+                "unfurl_links": false,
               },
             }];
             const blocks = {
