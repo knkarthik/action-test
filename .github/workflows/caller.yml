@@ -29,6 +29,10 @@ jobs:
     steps:
       - run: echo $JSON
       - run: echo $NEEDS
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+      - run: npm install @slack/web-api
       - name: List Failed Jobs
         id: list-failed-jobs
         uses: actions/github-script@v7
@@ -36,6 +40,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           result-encoding: string
           script: |
+            const { WebClient } = require("@slack/web-api");
             const { data } = await github.rest.actions.listJobsForWorkflowRun({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -54,29 +59,70 @@ jobs:
               type: 'section',
               text: {
                 type: 'mrkdwn',
-                text: `:x: <${context.payload.repository.html_url}/actions/runs/${context.runId}|Workflow run> failed for branch *${branchName}*`,
+                text: `<${context.payload.repository.html_url}/actions/runs/${context.runId}|Workflow run> failed for *${branchName}* :red_circle:`,
               },
             };
             const failedJobBlocks = [{
               type: 'section',
-              text: {
-                type: 'mrkdwn',
-                text: `Failed jobs: ${failedJobLinks.join(', ')}`
-              },
+              fields: [
+                {
+                  type: 'mrkdwn',
+                  text: '*Failed jobs*'
+                },
+                {
+                  type: 'mrkdwn',
+                  text: `${failedJobLinks.join(', ')}`
+                }
+              ],
             }];
-            const blocks = {
-              "blocks": [
-                workflowHeader,
-                ...failedJobBlocks
+            const authorSection = {
+              "type": "section",
+              "fields": [
+                {
+                  "type": "mrkdwn",
+                  "text": "*Author*"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": `${context.actor}`
+                }
               ]
             };
+            const blocks = [
+              workflowHeader,
+              authorSection,
+              ...failedJobBlocks
+            ];
+            
             console.log('Slack Blocks:', JSON.stringify(blocks));
             const message = JSON.stringify(blocks);
-            return message;
-      - name: Send Slack Notification
-        uses: slackapi/slack-github-action@v1.23.0
+            
+      - name: Send Slack notification
+        uses: actions/github-script@v7
         with:
-          channel-id: ${{ secrets.SLACK_CHANNEL }}
-          payload: ${{ steps.list-failed-jobs.outputs.result }}
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          CHANNEL_ID: ${{ secrets.SLACK_CHANNEL }}
+          message: ${{ steps.list-failed-jobs.outputs.result }}
+          result-encoding: string
+          script: |
+            const { WebClient } = require("@slack/web-api");
+            const client = new WebClient(process.env.SLACK_TOKEN);
+            try {
+              const result = await client.chat.postMessage({
+                channel: process.env.CHANNEL_ID,
+                text: "Workflow failed!",
+                blocks: process.env.message,
+                unfurl_links: false
+              });
+              }
+              catch (error) {
+                console.error(error);
+              }
+      # - name: Send Slack Notification
+      #   uses: slackapi/slack-github-action@v1.23.0
+      #   with:
+      #     channel-id: ${{ secrets.SLACK_CHANNEL }}
+      #     payload: ${{ steps.list-failed-jobs.outputs.result }}
+      #   env:
+      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
