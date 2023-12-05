@@ -28,4 +28,45 @@ jobs:
       GH_TOKEN: ${{ secrets.READ_CLEARSPELL_VARIABLES }}
     steps:
       - run: echo $JSON
-      - run: echo $NEEDS  
+      - run: echo $NEEDS
+      - name: List Failed Jobs
+        id: list-failed-jobs
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          result-encoding: string
+          script: |
+            const { data, context } = await github.actions.listJobsForWorkflowRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId,
+            });
+
+            const failedJobs = data.jobs.filter(job => job.conclusion === 'failure');
+            const failedJobLinks = failedJobs.map(job => `<${job.html_url}|${job.name}>`);
+            const branchName = context.ref.replace('refs/heads/', '');
+
+            const workflowHeader = {
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: `:x: <${context.workflow_url}|Workflow> failed for branch *${branchName}*`,
+              },
+            };
+            const failedJobBlocks = [{
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: `Failed jobs: ${failedJobLinks.join(', ')}`
+              },
+            }];
+            const blocks = {
+              "blocks": [
+                workflowHeader,
+                ...failedJobBlocks
+              ]
+            };
+            console.log('Slack Blocks:', JSON.stringify({ blocks: [workflowHeader] }));
+            const message = JSON.stringify({ blocks: [workflowHeader] });
+            return message;
+      - run: echo "${{steps.list-failed-jobs.outputs.result}}" 
