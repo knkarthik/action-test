@@ -50,6 +50,11 @@ jobs:
 
             const failedJobs = data.jobs.filter(job => job.conclusion === 'failure');
             const failedJobLinks = failedJobs.map(job => `<${job.html_url}|${job.name}>`);
+            console.log(context)
+            console.log(context.ref)
+            console.log('---')
+            console.log(context.ref_name)
+            
             const workflowHeader = {
               type: 'section',
               text: {
