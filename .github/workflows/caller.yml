@@ -72,4 +72,10 @@ jobs:
             console.log('Slack Blocks:', JSON.stringify(blocks));
             const message = JSON.stringify(blocks);
             return message;
-      - run: echo "${{steps.list-failed-jobs.outputs.result}}" 
+      - name: Send Slack Notification
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL }}
+          payload: ${{ steps.list-failed-jobs.outputs.result }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
