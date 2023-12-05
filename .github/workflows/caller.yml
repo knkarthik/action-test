@@ -95,7 +95,7 @@ jobs:
             
             console.log('Slack Blocks:', JSON.stringify(blocks));
             const message = JSON.stringify(blocks);
-            return message;
+            return blocks;
             
       - name: Send Slack notification
         uses: actions/github-script@v7
