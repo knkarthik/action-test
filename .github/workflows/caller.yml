@@ -69,7 +69,7 @@ jobs:
                 ...failedJobBlocks
               ]
             };
-            console.log('Slack Blocks:', JSON.stringify(block));
+            console.log('Slack Blocks:', JSON.stringify(blocks));
             const message = JSON.stringify(blocks);
             return message;
       - run: echo "${{steps.list-failed-jobs.outputs.result}}" 
