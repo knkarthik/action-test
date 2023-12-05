@@ -118,7 +118,7 @@ jobs:
                 channel: process.env.CHANNEL_ID,
                 text: "Workflow failed!",
                 blocks: process.env.message,
-                unfurl_links: fals
+                unfurl_links: false
               });
               }
               catch (error) {
