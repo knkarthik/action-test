@@ -118,11 +118,12 @@ jobs:
                 channel: process.env.CHANNEL_ID,
                 text: "Workflow failed!",
                 blocks: process.env.message,
-                unfurl_links: false
+                unfurl_links: fals
               });
               }
               catch (error) {
                 console.error(error);
+                return true;
               }
       # - name: Send Slack Notification
       #   uses: slackapi/slack-github-action@v1.23.0
