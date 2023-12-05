@@ -49,16 +49,12 @@ jobs:
             console.log(data);
 
             const failedJobs = data.jobs.filter(job => job.conclusion === 'failure');
-            console.log(failedJobs);
             const failedJobLinks = failedJobs.map(job => `<${job.html_url}|${job.name}>`);
-            const branchName = context.ref_name;
-            console.log(context.runId)
-            console.log(`${context.payload.repository.html_url}/actions/runs/${context.run_id}`)
             const workflowHeader = {
               type: 'section',
               text: {
                 type: 'mrkdwn',
-                text: `<${context.payload.repository.html_url}/actions/runs/${context.runId}|Workflow run> failed for *${branchName}* :red_circle:`,
+                text: `<${context.payload.repository.html_url}/actions/runs/${context.runId}|Workflow run> failed for *${context.ref_name}* :red_circle:`,
               },
             };
             const failedJobBlocks = [{
