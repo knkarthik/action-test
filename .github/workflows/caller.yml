@@ -53,7 +53,7 @@ jobs:
               type: 'section',
               text: {
                 type: 'mrkdwn',
-                text: `:x: <${context.workflow_url}|Workflow> failed for branch *${branchName}*`,
+                text: `:x: <${failedJobs[0].run_url}|Workflow> failed for branch *${branchName}*`,
               },
             };
             const failedJobBlocks = [{
@@ -69,7 +69,7 @@ jobs:
                 ...failedJobBlocks
               ]
             };
-            console.log('Slack Blocks:', JSON.stringify({ blocks: [workflowHeader] }));
-            const message = JSON.stringify({ blocks: [workflowHeader] });
+            console.log('Slack Blocks:', JSON.stringify(block));
+            const message = JSON.stringify(blocks);
             return message;
       - run: echo "${{steps.list-failed-jobs.outputs.result}}" 
