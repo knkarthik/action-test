@@ -99,11 +99,12 @@ jobs:
             
       - name: Send Slack notification
         uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+        env:
           SLACK_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           CHANNEL_ID: ${{ secrets.SLACK_CHANNEL }}
           message: ${{ steps.list-failed-jobs.outputs.result }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           result-encoding: string
           script: |
             const { WebClient } = require("@slack/web-api");
