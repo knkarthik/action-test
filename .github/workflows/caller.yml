@@ -90,16 +90,20 @@ jobs:
                 }
               ]
             };
+            const sha = 'a40c4a66cc52e7f1d20a5849c16966bd8fef3395'
+            const datadogSection = {
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: `<https://app.datadoghq.com/ci/test-commit/github.com%2Ffinanceit%2Ffinanceit/financeit-ci/master/${sha}?&env=test&index=citest|Datadog>`,
+              },
+            };
             const blocks = [
               workflowHeader,
               authorSection,
-              ...failedJobBlocks
-            ];
-            
-            console.log('Slack Blocks:', JSON.stringify(blocks));
-            const message = JSON.stringify(blocks);
-            return blocks;
-            // return message; 
+              ...failedJobBlocks,
+              datadogSection
+            ]; 
             
       # - name: Send Slack notification
       #   uses: actions/github-script@v7
@@ -136,7 +140,7 @@ jobs:
           slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_TOKEN }}
           slack-channel: ${{ secrets.SLACK_CHANNEL }}
           # slack-optional-blocks: ${{ steps.list-failed-jobs.outputs.result }}
-          slack-text: 🔴 <${{ env.run_url }}|${{ github.job }}> *job failed* for commit  <${{ env.commit_url }}|${{ github.sha}}> by author ${{ github.actor }}!
+          slack-text: 🔴 <${{ env.run_url }}|${{ github.job }}> *job failed* for commit  <${{ env.commit_url }}|${{ github.sha}}> by author ${{ github.actor }}‼️
           slack-optional-icon_emoji: ":fire:"
           slack-optional-unfurl_links: false
       # - name: Send Slack Notification
