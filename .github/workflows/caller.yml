@@ -127,7 +127,7 @@ jobs:
       #           return true;
       #         }
       - name: Send Slack Notification
-        uses: archive/github-actions-slack@v2.0.0
+        uses: archive/github-actions-slack@v2.8.0
         id: notify
         with:
           slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_TOKEN }}
