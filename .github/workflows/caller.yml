@@ -134,7 +134,7 @@ jobs:
           slack-channel: ${{ secrets.SLACK_CHANNEL }}
           slack-optional-blocks: ${{ steps.list-failed-jobs.outputs.result }}
           slack-optional-icon_emoji: ":fire:"
-          slack-optional-unfurl-links: false
+          slack-optional-unfurl_links: false
       # - name: Send Slack Notification
       #   uses: slackapi/slack-github-action@v1.23.0
       #   with:
