@@ -132,8 +132,9 @@ jobs:
         with:
           slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_TOKEN }}
           slack-channel: ${{ secrets.SLACK_CHANNEL }}
-          slack-blocks: ${{ steps.list-failed-jobs.outputs.result }}
+          slack-optional-blocks: ${{ steps.list-failed-jobs.outputs.result }}
           slack-optional-icon_emoji: ":fire:"
+          slack-optional-unfurl-links: false
       # - name: Send Slack Notification
       #   uses: slackapi/slack-github-action@v1.23.0
       #   with:
