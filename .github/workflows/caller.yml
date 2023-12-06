@@ -131,11 +131,12 @@ jobs:
         id: notify
         env:
           run_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          commit_url: ${{ github.server_url }}/${{ github.repository }}/commits/${{ github.sha }}
         with:
           slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_TOKEN }}
           slack-channel: ${{ secrets.SLACK_CHANNEL }}
           # slack-optional-blocks: ${{ steps.list-failed-jobs.outputs.result }}
-          slack-text: 🔴 <${{ env.run_url }}|${{ github.job }}> failed!! 
+          slack-text: 🔴 <${{ env.run_url }}|${{ github.job }}> job failed!! Failed commit: <${{ commit_url }}|${{ github.sha}}>, Author: ${{ github.author }}
           slack-optional-icon_emoji: ":fire:"
           slack-optional-unfurl_links: false
       # - name: Send Slack Notification
