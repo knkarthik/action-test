@@ -43,7 +43,7 @@ jobs:
 
   production-deploy:
     needs: [build-and-test]
-    if: ${{ github.event_name == 'push' || (always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') && github.event.inputs.deploy == 'true') }}
+    if: ${{ contains(needs.build-and-test.result, 'success') || (always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') && github.event.inputs.deploy == 'true') }}
     runs-on: ubuntu-latest
     environment: 
       name: prod
