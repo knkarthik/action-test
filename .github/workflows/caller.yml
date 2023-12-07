@@ -69,7 +69,7 @@ jobs:
       # JOB: ${{ toJSON(job) }}
       GH_TOKEN: ${{ secrets.READ_CLEARSPELL_VARIABLES }}
     steps:
-      - run: echo $JSON
+      - run: echo $JSON && sleep 15
 
   # test-job:
   #   runs-on: ubuntu-latest
