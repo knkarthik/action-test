@@ -31,13 +31,13 @@ jobs:
         with:
           github-token: ${{ secrets.SECRET }}
           script: |
-              const { data } = await octokit.actions.listRepoWorkflows({
+              const { data } = await github.rest.actions.listRepoWorkflows({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
               });
               const prodWorkflow = data.workflows.find(workflow => process.env.WORKFLOW_REF.includes(workflow.path));
               if (prodWorkflow) {
-                const { data } = await octokit.actions.listWorkflowRuns({
+                const { data } = await github.rest.actions.listWorkflowRuns({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   workflow_id: prodWorkflow.id,
@@ -45,7 +45,7 @@ jobs:
                 });
                 if (data.total_count > 0) {
                   console.log(data.workflow_runs[0])
-                  const { data } = await octokit.actions.reviewPendingDeploymentsForRun({
+                  const { data } = await github.rest.actions.reviewPendingDeploymentsForRun({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
                     run_id: data.workflow_runs[0].id,
