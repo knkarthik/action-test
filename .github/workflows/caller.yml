@@ -41,7 +41,7 @@ jobs:
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   workflow_id: prodWorkflow.id,
-                  status: "failure"
+                  status: "waiting"
                 });
                 if (runsData.total_count > 0) {
                   console.log(runsData.workflow_runs[0])
@@ -49,7 +49,7 @@ jobs:
                     owner: context.repo.owner,
                     repo: context.repo.repo,
                     run_id: runsData.workflow_runs[0].id,
-                    environment_ids: [process.env.PROD_ENV_ID],
+                    environment_ids: [parseInt(process.env.PROD_ENV_ID,10)],
                     state: 'rejected',
                     comment: 'Auto-rejected because of a new deploy'
                   });
