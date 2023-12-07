@@ -67,7 +67,7 @@ jobs:
             --status in_progress \
             --json databaseId \
             --jq ".[].databaseId" \
-            | xargs -I {} gh run delete {}
+            | xargs -I {} gh run cancel {}
       - name: prod deploy
         id: prod-deploy
         run: echo "URL=prod" >> $GITHUB_OUTPUT && sleep 5
