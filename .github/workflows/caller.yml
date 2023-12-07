@@ -51,7 +51,7 @@ jobs:
                     state: 'rejected',
                     comment: 'Auto-rejected because of a new deploy'
                   });
-                  console.log(reviewData);
+                  console.log(`Auto-rejected waiting deployment for commit ${context.sha}`);
                 }
               }
   
