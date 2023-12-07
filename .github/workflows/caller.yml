@@ -11,16 +11,8 @@ on:
   pull_request:
 
 jobs:
-  call:
-    if: ${{ github.event_name == 'push' || github.event.inputs.test_push == 'true' }} 
-    uses: ./.github/workflows/called.yml
-    with:
-      concurrency_key: ${{ github.run_id }}
-
-  test-job:
+  fe_deploy:
     runs-on: ubuntu-latest
-    needs: ['call']
-    if: ${{ failure() && needs.call.result == 'failure' }}
     env:
       JSON: ${{ toJSON(github) }}
       NEEDS: ${{ toJSON(needs) }}
@@ -28,82 +20,140 @@ jobs:
       GH_TOKEN: ${{ secrets.READ_CLEARSPELL_VARIABLES }}
     steps:
       - run: echo $JSON
-      - run: echo $NEEDS
       - uses: actions/setup-node@v3
         with:
           node-version: '20.x'
-      - run: npm install @slack/web-api
-      - name: List Failed Jobs
-        id: list-failed-jobs
+      - name: Reject old waiting deploy jobs
         uses: actions/github-script@v7
         env:
-          branch: ${{ github.ref_name }}
+          WORKFLOW_REF: ${{ github.workflow_ref }}
+          PROD_ENV_ID: 1821339418
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.SECRET }}
           script: |
-            const { WebClient } = require("@slack/web-api");
-            const { data } = await github.rest.actions.listJobsForWorkflowRun({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: context.runId,
-            });
+              const { data } = await octokit.actions.listRepoWorkflows({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+              });
+              const prodWorkflow = data.workflows.find(workflow => process.env.WORKFLOW_REF.includes(workflow.path));
+              if (prodWorkflow) {
+                const { data } = await octokit.actions.listWorkflowRuns({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  workflow_id: prodWorkflow.id,
+                  status: "failure"
+                });
+                if (data.total_count > 0) {
+                  console.log(data.workflow_runs[0])
+                  const { data } = await octokit.actions.reviewPendingDeploymentsForRun({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    run_id: data.workflow_runs[0].id,
+                    environment_ids: [process.env.PROD_ENV_ID],
+                    state: 'rejected',
+                    comment: 'Auto-rejected because of a new deploy'
+                  });
+                }
+              }
 
-            console.log(context);
+  
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      JSON: ${{ toJSON(github) }}
+      NEEDS: ${{ toJSON(needs) }}
+      # JOB: ${{ toJSON(job) }}
+      GH_TOKEN: ${{ secrets.READ_CLEARSPELL_VARIABLES }}
+    steps:
+      - run: echo $JSON
 
-            const failedJobs = data.jobs.filter(job => job.conclusion === 'failure');
-            const failedJobLinks = failedJobs.map(job => `<${job.html_url}|${job.name}>`);
-            console.log(context)
-            console.log(context.ref)
-            console.log('---')
-            console.log(context.ref_name)
+  # test-job:
+  #   runs-on: ubuntu-latest
+  #   needs: ['call']
+  #   if: ${{ failure() && needs.call.result == 'failure' }}
+  #   env:
+  #     JSON: ${{ toJSON(github) }}
+  #     NEEDS: ${{ toJSON(needs) }}
+  #     # JOB: ${{ toJSON(job) }}
+  #     GH_TOKEN: ${{ secrets.READ_CLEARSPELL_VARIABLES }}
+  #   steps:
+  #     - run: echo $JSON
+  #     - run: echo $NEEDS
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '20.x'
+  #     - run: npm install @slack/web-api
+  #     - name: List Failed Jobs
+  #       id: list-failed-jobs
+  #       uses: actions/github-script@v7
+  #       env:
+  #         branch: ${{ github.ref_name }}
+  #       with:
+  #         github-token: ${{ secrets.GITHUB_TOKEN }}
+  #         script: |
+  #           const { WebClient } = require("@slack/web-api");
+  #           const { data } = await github.rest.actions.listJobsForWorkflowRun({
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             run_id: context.runId,
+  #           });
+
+  #           console.log(context);
+
+  #           const failedJobs = data.jobs.filter(job => job.conclusion === 'failure');
+  #           const failedJobLinks = failedJobs.map(job => `<${job.html_url}|${job.name}>`);
+  #           console.log(context)
+  #           console.log(context.ref)
+  #           console.log('---')
+  #           console.log(context.ref_name)
             
-            const workflowHeader = {
-              type: 'section',
-              text: {
-                type: 'mrkdwn',
-                text: `<${context.payload.repository.html_url}/actions/runs/${context.runId}|Workflow run> failed for *${process.env.branch}* :red_circle:`,
-              },
-            };
-            const failedJobBlocks = [{
-              type: 'section',
-              fields: [
-                {
-                  type: 'mrkdwn',
-                  text: '*Failed jobs*'
-                },
-                {
-                  type: 'mrkdwn',
-                  text: `${failedJobLinks.join(', ')}`
-                }
-              ],
-            }];
-            const authorSection = {
-              "type": "section",
-              "fields": [
-                {
-                  "type": "mrkdwn",
-                  "text": "*Author*"
-                },
-                {
-                  "type": "mrkdwn",
-                  "text": `${context.actor}`
-                }
-              ]
-            };
-            const sha = 'a40c4a66cc52e7f1d20a5849c16966bd8fef3395'
-            const datadogSection = {
-              type: 'section',
-              text: {
-                type: 'mrkdwn',
-                text: `<https://app.datadoghq.com/ci/test-commit/github.com%2Ffinanceit%2Ffinanceit/financeit-ci/master/${sha}?&env=test&index=citest|Datadog>`,
-              },
-            };
-            const blocks = [
-              workflowHeader,
-              authorSection,
-              ...failedJobBlocks,
-              datadogSection
-            ]; 
+  #           const workflowHeader = {
+  #             type: 'section',
+  #             text: {
+  #               type: 'mrkdwn',
+  #               text: `<${context.payload.repository.html_url}/actions/runs/${context.runId}|Workflow run> failed for *${process.env.branch}* :red_circle:`,
+  #             },
+  #           };
+  #           const failedJobBlocks = [{
+  #             type: 'section',
+  #             fields: [
+  #               {
+  #                 type: 'mrkdwn',
+  #                 text: '*Failed jobs*'
+  #               },
+  #               {
+  #                 type: 'mrkdwn',
+  #                 text: `${failedJobLinks.join(', ')}`
+  #               }
+  #             ],
+  #           }];
+  #           const authorSection = {
+  #             "type": "section",
+  #             "fields": [
+  #               {
+  #                 "type": "mrkdwn",
+  #                 "text": "*Author*"
+  #               },
+  #               {
+  #                 "type": "mrkdwn",
+  #                 "text": `${context.actor}`
+  #               }
+  #             ]
+  #           };
+  #           const sha = 'a40c4a66cc52e7f1d20a5849c16966bd8fef3395'
+  #           const datadogSection = {
+  #             type: 'section',
+  #             text: {
+  #               type: 'mrkdwn',
+  #               text: `<https://app.datadoghq.com/ci/test-commit/github.com%2Ffinanceit%2Ffinanceit/financeit-ci/master/${sha}?&env=test&index=citest|Datadog>`,
+  #             },
+  #           };
+  #           const blocks = [
+  #             workflowHeader,
+  #             authorSection,
+  #             ...failedJobBlocks,
+  #             datadogSection
+  #           ]; 
             
       # - name: Send Slack notification
       #   uses: actions/github-script@v7
