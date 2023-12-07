@@ -54,7 +54,6 @@ jobs:
                   console.log(reviewData);
                 }
               }
-
   
   deploy:
     runs-on: ubuntu-latest
