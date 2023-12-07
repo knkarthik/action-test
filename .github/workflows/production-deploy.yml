@@ -2,9 +2,9 @@ name: Production Deploy
 
 
 on:
-  # push:
-  #   branches:
-  #     - "main"
+  push:
+    branches:
+      - "test-skip"
 
   workflow_dispatch: 
     inputs:
@@ -21,29 +21,29 @@ jobs:
     with:
       concurrency_key: ${{ github.run_id }}
 
-  build-base:
-    # if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'main' }}
-    runs-on: ubuntu-latest
-    concurrency: 
-     group: production-build-base-${{ github.run_id }}
-     cancel-in-progress: false
-    steps:
-      - run: echo '${{ toJSON(github) }}'
+  # build-base:
+  #   # if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'main' }}
+  #   runs-on: ubuntu-latest
+  #   concurrency: 
+  #    group: production-build-base-${{ github.run_id }}
+  #    cancel-in-progress: false
+  #   steps:
+  #     - run: echo '${{ toJSON(github) }}'
 
-  production-ember-build:
-    # if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'main' }}
-    needs: [build-base]
-    concurrency: 
-      group: production-ember-build-${{ github.run_id }}
-      cancel-in-progress: false
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "deploying" && sleep 5
+  # production-ember-build:
+  #   needs: [build-base]
+  #   environment: 
+  #     name: prod-ember
+  #   concurrency: 
+  #     group: production-ember-build-${{ github.run_id }}
+  #     cancel-in-progress: false
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - run: echo "deploying" && sleep 5
 
   production-deploy:
-    # if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'main' }}
-    
-    needs: [production-ember-build]
+    needs: [build-and-test]
+    if: ${{ github.event_name == 'push' || (always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') && github.event.inputs.deploy == 'true') }}
     runs-on: ubuntu-latest
     environment: 
       name: prod
