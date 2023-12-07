@@ -32,6 +32,7 @@ jobs:
 
   production-ember-build:
     needs: [build-and-test]
+    if: ${{ contains(needs.*.result, 'success') || (always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') && github.event.inputs.deploy == 'true') }}
     environment: 
       name: prod-ember
     concurrency: 
