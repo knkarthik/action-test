@@ -45,11 +45,10 @@ jobs:
                 });
                 if (runsData.total_count > 0) {
                   console.log(runsData.workflow_runs[0])
-                  const waitingWorkflow = runsData.workflow_runs[0]
                   const { data: reviewData } = await github.rest.actions.reviewPendingDeploymentsForRun({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
-                    run_id: waitingWorkflow.workflow_runs[0].id,
+                    run_id: runsData.workflow_runs[0].id,
                     environment_ids: [process.env.PROD_ENV_ID],
                     state: 'rejected',
                     comment: 'Auto-rejected because of a new deploy'
