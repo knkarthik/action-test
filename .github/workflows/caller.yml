@@ -37,16 +37,16 @@ jobs:
               });
               const prodWorkflow = data.workflows.find(workflow => process.env.WORKFLOW_REF.includes(workflow.path));
               if (prodWorkflow) {
-                const { data } = await github.rest.actions.listWorkflowRuns({
+                const { data: runsData } = await github.rest.actions.listWorkflowRuns({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   workflow_id: prodWorkflow.id,
                   status: "failure"
                 });
-                if (data.total_count > 0) {
-                  console.log(data.workflow_runs[0])
-                  const waitingWorkflow = data.workflow_runs[0]
-                  const { data } = await github.rest.actions.reviewPendingDeploymentsForRun({
+                if (runsData.total_count > 0) {
+                  console.log(runsData.workflow_runs[0])
+                  const waitingWorkflow = runsData.workflow_runs[0]
+                  const { data: reviewData } = await github.rest.actions.reviewPendingDeploymentsForRun({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
                     run_id: waitingWorkflow.workflow_runs[0].id,
