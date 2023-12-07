@@ -13,7 +13,6 @@ on:
 jobs:
   fe_deploy:
     runs-on: ubuntu-latest
-    environment: test
     env:
       JSON: ${{ toJSON(github) }}
       NEEDS: ${{ toJSON(needs) }}
@@ -60,6 +59,7 @@ jobs:
   
   deploy:
     runs-on: ubuntu-latest
+    environment: test
     needs: [fe_deploy]
     env:
       JSON: ${{ toJSON(github) }}
