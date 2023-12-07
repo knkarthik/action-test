@@ -40,7 +40,7 @@ jobs:
       cancel-in-progress: false
     runs-on: ubuntu-latest
     steps:
-      - run: echo "deploying" && sleep 3
+      - run: echo "deploying" && sleep 5
 
   production-deploy:
     needs: [production-ember-build, build-and-test]
@@ -55,4 +55,4 @@ jobs:
     steps:
       - name: prod deploy
         id: prod-deploy
-        run: echo "URL=prod" >> $GITHUB_OUTPUT
+        run: echo "URL=prod" >> $GITHUB_OUTPUT && sleep 5
