@@ -63,6 +63,7 @@ jobs:
           echo "Only this job is deploying to prod now"
           # we can cancel all other prod-deploy workflows safely
           # as no other production-deploy jobs are running now
+          gh run list --branch test-skip --workflow "${{ github.workflow }}" --limit 2
           gh run list --branch test-skip --workflow "${{ github.workflow }}" \
             --status in_progress \
             --json databaseId \
