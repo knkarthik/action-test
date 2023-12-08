@@ -66,9 +66,10 @@ jobs:
           gh run list --branch test-skip --workflow "${{ github.workflow }}" --limit 5
           this_run=${{ github.run_number }}
           gh run list --branch test-skip --workflow "${{ github.workflow }}" \
+            --event "push" \
             --limit 10 \
             --json status,databaseId \
-            |jq -r --arg this_run "$this_run" '.[] | select((.status == "in_progress" or .status == "queued") and .databaseId != ($this_run | tonumber)) | .databaseId') \
+            | jq -r --arg this_run "$this_run" '.[] | select((.status == "in_progress" or .status == "queued") and .databaseId != ($this_run | tonumber)) | .databaseId' \
             | xargs -I {} gh run cancel {}
       - name: prod deploy
         id: prod-deploy
