@@ -32,6 +32,7 @@ jobs:
         env:
           JSON: ${{ toJSON(github) }}
         run: echo $JSON && echo "SHOULD_BUILD_CI_IMAGE=false" >> GITHUB_OUTPUT && sleep 20
+      
       # - name: Checkout
       #   uses: actions/checkout@v4
       #   with:
