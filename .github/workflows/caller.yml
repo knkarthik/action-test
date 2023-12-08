@@ -34,7 +34,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
               });
-              console.log(context.payload.head_commit.split('\n')[0])
+              console.log(context.payload.head_commit.message.split('\n')[0])
               const prodWorkflow = data.workflows.find(workflow => process.env.WORKFLOW_REF.includes(workflow.path));
               if (prodWorkflow) {
                 const { data: runsData } = await github.rest.actions.listWorkflowRuns({
