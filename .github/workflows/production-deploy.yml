@@ -63,7 +63,6 @@ jobs:
           echo "Only this job is deploying to prod now"
           # we can cancel all other prod-deploy workflows safely
           # as no other production-deploy jobs are running now
-          gh run list --branch test-skip --workflow "${{ github.workflow }}" --event push --limit 10
           this_run=${{ github.run_number }}
           gh run list --branch test-skip --workflow "${{ github.workflow }}" \
             --event push \
@@ -73,4 +72,4 @@ jobs:
             | xargs -I {} gh api --method POST /repos/${{github.repository}}/actions/runs/{}/force-cancel
       - name: prod deploy
         id: prod-deploy
-        run: echo "URL=prod" >> $GITHUB_OUTPUT && sleep 60
+        run: echo "URL=prod" >> $GITHUB_OUTPUT && sleep 10
