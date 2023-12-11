@@ -56,7 +56,6 @@ jobs:
     steps:
       - run: echo '${{ toJSON(github) }}'
       - name: Auto approve production deployment job 🚀
-        if: github.event.inputs.deploy == 'true'
         run: |
           we can cancel all other prod-deploy workflows safely
           as no other production-deploy jobs are running now
