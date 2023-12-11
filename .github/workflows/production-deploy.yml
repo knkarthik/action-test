@@ -72,7 +72,8 @@ jobs:
           spec_only_changed=${{ steps.changed-files.outputs.spec_only_changed }}
           echo "only spec files got changed is $spec_only_changed"
           echo "Modified files are ${{ steps.changed-files.outputs.all_modified_files }}"
-          for file in ${{ steps.changed-files.outputs.all_modified_files }}; do
+          echo "all output: ${{steps.changed-files.outputs}}"
+          for file in ${{ steps.changed-files.outputs }}; do
             echo "$file was changed"
           done
       - name: spec_only_changed changed
