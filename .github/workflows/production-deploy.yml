@@ -44,40 +44,42 @@ jobs:
     steps:
       - run: echo "deploying" && sleep 5
 
-  trigger-auto-deploy:
-    needs: [build-and-test,build-base,production-ember-build]
-    if: ${{ always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') || github.event.inputs.deploy == 'true' }}
-    runs-on: ubuntu-latest
-    concurrency: 
-     group: production-build-base-${{ github.run_id }}
-     cancel-in-progress: false
-    env:
-      prod_env_id: 670156242
-      GH_TOKEN: ${{ secrets.SECRET }}
-    steps:
-      - run: echo '${{ toJSON(github) }}'
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
-      - name: Auto approve production deployment job 🚀
-        run: |
-          # we can cancel all other prod-deploy workflows safely
-          # as no other production-deploy jobs are running now
-          echo "waiting runs"
-          gh run list --branch ${{ github.ref_name }} --workflow "${{ github.workflow }}" \
-            --event push \
-            --status waiting
-          gh api --method POST \
-            "/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments" \
-            -F "environment_ids[]=${{ env.prod_env_id }}" \
-            -f state='approved' \
-            -f comment='Auto-approved' 
-
+  # trigger-auto-deploy:
+  #   needs: [build-and-test,build-base,production-ember-build]
+  #   if: ${{ always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') || github.event.inputs.deploy == 'true' }}
+  #   runs-on: ubuntu-latest
+  #   concurrency: 
+  #    group: production-build-base-${{ github.run_id }}
+  #    cancel-in-progress: false
+  #   env:
+  #     prod_env_id: 670156242
+  #     GH_TOKEN: ${{ secrets.SECRET }}
+  #   steps:
+  #     - run: echo '${{ toJSON(github) }}'
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 2
+  #     - name: Auto approve production deployment job 🚀
+  #       run: |
+  #         # we can cancel all other prod-deploy workflows safely
+  #         # as no other production-deploy jobs are running now
+  #         echo "waiting runs"
+  #         gh run list --branch ${{ github.ref_name }} --workflow "${{ github.workflow }}" \
+  #           --event push \
+  #           --status waiting
+  #         waiting_jobs=(gh run list --branch ${{ github.ref_name }} --workflow "${{ github.workflow }}" \
+  #           --event push \
+  #           --status waiting)
+  #         gh api --method POST \
+  #           "/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments" \
+  #           -F "environment_ids[]=${{ env.prod_env_id }}" \
+  #           -f state='approved' \
+  #           -f comment='Auto-approved' 
 
   production-deploy:
     needs: [build-and-test,build-base,production-ember-build]
-    if: ${{ always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') || github.event.inputs.deploy == 'true' }}
+    # if: ${{ always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') || github.event.inputs.deploy == 'true' }}
     runs-on: ubuntu-latest
     environment: 
       name: prod
