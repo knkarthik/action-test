@@ -76,17 +76,17 @@ jobs:
             echo "$file was changed"
           done
       - name: spec_only_changed changed
-        if: ${{ steps.changed-files.outputs.spec_only_changed }}
-        run: echo "${{ steps.changed-files.outputs.all_modified_files }}"
+        if: ${{ steps.changed-files.outputs.spec_only_changed == 'true'}}
+        run: echo "${{ steps.changed-files.outputs.spec_all_modified_files }}"
       - name: spec_any_changed changed
-        if: ${{ steps.changed-files.outputs.spec_any_changed }}
-        run: echo "${{ steps.changed-files.outputs.all_modified_files }}"
+        if: ${{ steps.changed-files.outputs.spec_any_changed  == 'true'}}
+        run: echo "${{ steps.changed-files.outputs.spec_all_modified_files }}"
       - name: ember_only_changed
-        if: ${{ steps.changed-files.outputs.ember_only_changed }}
-        run: echo "${{ steps.changed-files.outputs.all_modified_files }}"
+        if: ${{ steps.changed-files.outputs.ember_only_changed == 'true' }}
+        run: echo "${{ steps.changed-files.outputs.ember_all_modified_files }}"
       - name: ember_any_changed
-        if: ${{ steps.changed-files.outputs.ember_any_changed }}
-        run: echo "${{ steps.changed-files.outputs.all_modified_files }}"
+        if: ${{ steps.changed-files.outputs.ember_any_changed == 'true' }}
+        run: echo "${{ steps.changed-files.outputs.ember_all_modified_files }}"
   # trigger-auto-deploy:
   #   needs: [build-and-test,build-base,production-ember-build]
   #   if: ${{ always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') || github.event.inputs.deploy == 'true' }}
