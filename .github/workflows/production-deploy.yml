@@ -28,7 +28,7 @@ jobs:
      group: production-build-base-${{ github.run_id }}
      cancel-in-progress: false
     steps:
-      - run: echo '${{ toJSON(github) }}' && exit 1
+      - run: echo '${{ toJSON(github) }}' && sleep 2
 
   production-ember-build:
     needs: [build-base]
@@ -43,7 +43,9 @@ jobs:
     env:
       JSON: ${{ toJSON(needs) }}
     steps:
+      - run: echo "deploying" && exit 1
       - run: echo "deploying" && sleep 5
+      
 
   # trigger-auto-deploy:
   #   needs: [build-and-test,build-base,production-ember-build]
