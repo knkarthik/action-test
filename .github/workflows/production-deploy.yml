@@ -53,6 +53,7 @@ jobs:
         uses: tj-actions/changed-files@a0585ff9904b77d046192a7846e59783d6ea287b #v37
         with:
           escape_json: false
+          quotepath: false
           files_yaml: |
             spec:
               - '.github/**'
