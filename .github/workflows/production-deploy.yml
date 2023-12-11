@@ -57,7 +57,6 @@ jobs:
           files_yaml: |
             spec:
               - '.github/**'
-              - '!.github/workflows/production-deploy.yml'
               - spec/**
               - spec_acceptance/**
             ember:
@@ -78,13 +77,16 @@ jobs:
           echo "all output: ${{ toJson(steps.changed-files.outputs) }}"
           echo "spec_all_modified files: ${{ steps.changed-files.outputs.spec_all_modified_files }}"
       - name: spec_only_changed changed
-        if: ${{ steps.changed-files.outputs.spec_only_changed == 'true' && contains(steps.changed-files.outputs.spec_all_modified_files, 'production-deploy') }}
+        if: ${{ steps.changed-files.outputs.spec_only_changed == 'true' }}
         run: echo "${{ steps.changed-files.outputs.spec_all_modified_files }}"
       - name: spec_any_changed changed
         if: ${{ steps.changed-files.outputs.spec_any_changed  == 'true'}}
         run: echo "${{ steps.changed-files.outputs.spec_all_modified_files }}"
       - name: ember_only_changed
         if: ${{ steps.changed-files.outputs.ember_only_changed == 'true' }}
+        run: echo "${{ steps.changed-files.outputs.ember_all_modified_files }}"
+      - name: ember_only_changed or manual
+        if: ${{ steps.changed-files.outputs.ember_only_changed == 'true' || github.event.inputs.deploy == 'true' }}
         run: echo "${{ steps.changed-files.outputs.ember_all_modified_files }}"
       - name: ember_any_changed
         if: ${{ steps.changed-files.outputs.ember_any_changed == 'true' }}
