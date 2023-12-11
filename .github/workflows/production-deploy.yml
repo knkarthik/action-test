@@ -80,7 +80,7 @@ jobs:
             echo "$file was changed"
           done
       - name: spec_only_changed changed
-        if: ${{ steps.changed-files.outputs.spec_only_changed == 'true' && contains(steps.changed-files.outputs.spec_all_modified_files, '.production-deploy') }}
+        if: ${{ steps.changed-files.outputs.spec_only_changed == 'true' && contains(steps.changed-files.outputs.spec_all_modified_files, 'production-deploy') }}
         run: echo "${{ steps.changed-files.outputs.spec_all_modified_files }}"
       - name: spec_any_changed changed
         if: ${{ steps.changed-files.outputs.spec_any_changed  == 'true'}}
