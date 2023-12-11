@@ -43,7 +43,7 @@ jobs:
     env:
       JSON: ${{ toJSON(needs) }}
     steps:
-      - run: echo "deploying" && exit 1
+      # - run: echo "deploying" && exit 1
       - run: echo "deploying" && sleep 5
       
 
@@ -81,6 +81,10 @@ jobs:
   #           -f comment='Auto-approved' 
 
   production-deploy:
+  # doesn't deploy if only build-base failed (auto/manual)
+  # doesn't deploy if only ember failed (auto/manual)
+  # doesn't deploy if only test failed (auto)
+  # deploy if only test failed (manual)
     needs: [build-and-test,build-base,production-ember-build]
     # if: ${{ always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') && !contains(needs.*.result, 'skipped')  || github.event.inputs.deploy == 'true' }}
     if: >-
