@@ -71,8 +71,8 @@ jobs:
 
 
   production-deploy:
-    needs: [trigger-auto-deploy]
-    if: ${{ always() && needs.trigger-auto-deploy.result == 'success' || github.event.inputs.deploy == 'true' }}
+    needs: [build-and-test,build-base,production-ember-build]
+    if: ${{ always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') || github.event.inputs.deploy == 'true' }}
     runs-on: ubuntu-latest
     environment: 
       name: prod
