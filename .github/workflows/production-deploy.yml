@@ -28,7 +28,7 @@ jobs:
      group: production-build-base-${{ github.run_id }}
      cancel-in-progress: false
     steps:
-      - run: echo '${{ toJSON(github) }}' && sleep 2
+      - run: echo '${{ toJSON(github) }}' && sleep 1
 
   production-ember-build:
     needs: [build-base]
