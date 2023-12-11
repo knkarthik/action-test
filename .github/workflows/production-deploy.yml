@@ -91,6 +91,8 @@ jobs:
       - name: ember_any_changed
         if: ${{ steps.changed-files.outputs.ember_any_changed == 'true' }}
         run: echo "${{ steps.changed-files.outputs.ember_all_modified_files }}"
+    outputs:
+      skip_prod_deploy: ${{ steps.changed-files.outputs.spec_only_changed == 'true' }}
   # trigger-auto-deploy:
   #   needs: [build-and-test,build-base,production-ember-build]
   #   if: ${{ always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') || github.event.inputs.deploy == 'true' }}
@@ -146,8 +148,11 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.SECRET }}
       JSON: ${{ toJSON(needs) }}
+      SKIP_PROD_DEPLOY: ${{ needs.production-ember-build.outputs.skip_prod_deploy == 'true' || inputs.deploy == 'true' }}
     steps:
-      
+      - name: skip prod deploy
+        if: ${{ env.SKIP_PROD_DEPLOY }}
+        run: echo "Test file changes only; skipping prod deploy"
       - name: prod deploy
-        id: prod-deploy
+        if: ${{ !env.SKIP_PROD_DEPLOY }}
         run: echo "URL=prod" >> $GITHUB_OUTPUT && sleep 1
