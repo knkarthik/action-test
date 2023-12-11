@@ -57,8 +57,8 @@ jobs:
       - run: echo '${{ toJSON(github) }}'
       - name: Auto approve production deployment job 🚀
         run: |
-          we can cancel all other prod-deploy workflows safely
-          as no other production-deploy jobs are running now
+          # we can cancel all other prod-deploy workflows safely
+          # as no other production-deploy jobs are running now
           this_run=${{ github.run_number }}
           echo "waiting runs"
           gh run list --branch ${{ github.ref_name }} --workflow "${{ github.workflow }}" \
