@@ -64,13 +64,12 @@ jobs:
         run: |
           # we can cancel all other prod-deploy workflows safely
           # as no other production-deploy jobs are running now
-          this_run=${{ github.run_number }}
           echo "waiting runs"
           gh run list --branch ${{ github.ref_name }} --workflow "${{ github.workflow }}" \
             --event push \
             --status waiting
           gh api --method POST \
-            "/repos/${{ github.repository }}/actions/runs/${{ github.run_number }}/pending_deployments" \
+            "/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/pending_deployments" \
             -F "environment_ids[]=${{ env.prod_env_id }}" \
             -f state='approved' \
             -f comment='Auto-approved' 
