@@ -52,6 +52,7 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@a0585ff9904b77d046192a7846e59783d6ea287b #v37
         with:
+          json: true
           files_yaml: |
             spec:
               - '.github/**'
@@ -73,6 +74,7 @@ jobs:
           echo "only spec files got changed is $spec_only_changed"
           echo "Modified files are ${{ steps.changed-files.outputs.all_modified_files }}"
           echo "all output: ${{ toJson(steps.changed-files.outputs) }}"
+          echo "spec_all_modified files: ${{ steps.changed-files.outputs.spec_all_modified_files }}"
           for file in ${{ steps.changed-files.outputs }}; do
             echo "$file was changed"
           done
