@@ -70,8 +70,10 @@ jobs:
             --event push \
             --status waiting
           gh api --method POST \
-            "https://api.github.com/repos/${{ github.repository }}/actions/runs/$this_run/pending_deployments" \
-            -d '{"environment_ids":[${{ env.prod_env_id }}],"state":"approved","comment":"Auto-approved"}'
+            "/repos/${{ github.repository }}/actions/runs/${{ github.run_number }}/pending_deployments" \
+            -F "environment_ids[]=${{ env.prod_env_id }}" \
+            -f state='approved' \
+            -f comment='Auto-approved' 
 
 
   production-deploy:
