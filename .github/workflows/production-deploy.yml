@@ -44,9 +44,19 @@ jobs:
     steps:
       - run: echo "deploying" && sleep 5
 
-  production-deploy:
+  trigger-auto-deploy:
     needs: [build-and-test,build-base,production-ember-build]
     if: ${{ always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') || github.event.inputs.deploy == 'true' }}
+    runs-on: ubuntu-latest
+    concurrency: 
+     group: production-build-base-${{ github.run_id }}
+     cancel-in-progress: false
+    steps:
+      - run: echo '${{ toJSON(github) }}' && exit 0
+
+  production-deploy:
+    needs: [trigger-auto-deploy]
+    if: ${{ always() && needs.trigger-auto-deploy.result != 'failure' && needs.trigger-auto-deploy.result !=  'cancelled' || github.event.inputs.deploy == 'true' }}
     runs-on: ubuntu-latest
     environment: 
       name: prod
