@@ -22,7 +22,6 @@ on:
 env:
   BUNDLE_SILENCE_ROOT_WARNING: 1
   CI: "true"
-
 jobs:
   build-base:
     runs-on: ubuntu-latest
