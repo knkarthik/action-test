@@ -45,7 +45,7 @@ jobs:
       - run: echo "deploying" && sleep 5
 
   production-deploy:
-    needs: [production-ember-build, build-and-test]
+    needs: [build-and-test,build-base,production-ember-build]
     if: ${{ contains(needs.*.result, 'success') || (always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') && github.event.inputs.deploy == 'true') }}
     runs-on: ubuntu-latest
     environment: 
