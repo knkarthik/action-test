@@ -43,7 +43,7 @@ jobs:
     env:
       JSON: ${{ toJSON(needs) }}
     steps:
-      - run: echo "deploying" && exit 1
+      - run: echo "deploying" && exit 0
       - run: echo "deploying" && sleep 5
       
 
@@ -83,6 +83,7 @@ jobs:
   production-deploy:
   # doesn't deploy if only build-base failed (auto/manual)
   # doesn't deploy if only ember failed (auto/manual)
+  # doesn't deploy if test+ember failed (auto/manual)
   # doesn't deploy if only test failed (auto)
   # deploy if only test failed (manual)
     needs: [build-and-test,build-base,production-ember-build]
