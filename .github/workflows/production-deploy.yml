@@ -53,6 +53,7 @@ jobs:
      cancel-in-progress: false
     env:
       prod_env_id: 670156242
+      GH_TOKEN: ${{ secrets.SECRET }}
     steps:
       - run: echo '${{ toJSON(github) }}'
       - name: Auto approve production deployment job 🚀
