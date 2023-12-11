@@ -65,11 +65,11 @@ jobs:
               - app/assets/**
       - name: echo changed files
         run: |
-          ember_any_changed=${{ needs.changed-files.outputs.ember_any_changed }}
+          ember_any_changed=${{ steps.changed-files.outputs.ember_any_changed }}
           echo "Any frontend files got changed is $ember_any_changed"
-          spec_any_changed=${{ needs.changed-files.outputs.spec_any_changed }}
+          spec_any_changed=${{ steps.changed-files.outputs.spec_any_changed }}
           echo "Any spec files got changed is $spec_any_changed"
-          spec_only_changed=${{ needs.changed-files.outputs.spec_only_changed }}
+          spec_only_changed=${{ steps.changed-files.outputs.spec_only_changed }}
           echo "only spec files got changed is $spec_only_changed"
           echo "Modified files are ${{ steps.changed-files.outputs.all_modified_files }}"
           for file in ${{ steps.changed-files.outputs.all_modified_files }}; do
