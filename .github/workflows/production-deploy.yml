@@ -57,6 +57,7 @@ jobs:
           files_yaml: |
             spec:
               - '.github/**'
+              - '!.github/workflows/production-deploy.yml'
               - spec/**
               - spec_acceptance/**
             ember:
