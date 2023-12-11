@@ -148,7 +148,7 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.SECRET }}
       JSON: ${{ toJSON(needs) }}
-      SKIP_PROD_DEPLOY: ${{ needs.production-ember-build.outputs.skip_prod_deploy == 'true' || inputs.deploy == 'true' }}
+      SKIP_PROD_DEPLOY: ${{ inputs.deploy == 'true' || needs.production-ember-build.outputs.skip_prod_deploy == 'true' }}
     steps:
       - name: skip prod deploy
         if: ${{ env.SKIP_PROD_DEPLOY }}
