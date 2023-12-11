@@ -56,7 +56,7 @@ jobs:
 
   production-deploy:
     needs: [trigger-auto-deploy]
-    if: ${{ always() && needs.trigger-auto-deploy.result != 'failure' && needs.trigger-auto-deploy.result !=  'cancelled' || github.event.inputs.deploy == 'true' }}
+    if: ${{ always() && needs.trigger-auto-deploy.result == 'success' || github.event.inputs.deploy == 'true' }}
     runs-on: ubuntu-latest
     environment: 
       name: prod
