@@ -24,7 +24,7 @@ jobs:
 
   build-base:
     # if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'test-skip' }}
-    if: ${{ github.ref_name == 'test-skip' && github.event_name == 'push' || github.event.inputs.deploy == 'true' }}
+    if: ${{ github.ref_name == 'test-skip' && github.event_name == 'push' || github.ref_name == 'test-skip' && github.event.inputs.deploy == 'true' }}
     runs-on: ubuntu-latest
     concurrency: 
      group: production-build-base-${{ github.run_id }}
@@ -34,7 +34,7 @@ jobs:
 
   production-ember-build:
     needs: [build-base]
-    if: ${{ github.ref_name == 'test-skip' && github.event_name == 'push' || github.event.inputs.deploy == 'true' }}
+    if: ${{ github.ref_name == 'test-skip' && github.event_name == 'push' || github.ref_name == 'test-skip' && github.event.inputs.deploy == 'true' }}
     # if: ${{ contains(needs.*.result, 'success') || (always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') && github.event.inputs.deploy == 'true') }}
     # if: ${{ always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') || github.event.inputs.deploy == 'true' }}
     environment: 
