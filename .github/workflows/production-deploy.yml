@@ -143,7 +143,7 @@ jobs:
   # doesn't deploy if only test failed (auto)
   # deploy if only test failed (manual)
     needs: [production-ember-build]
-    if: always() && !failure() && !cancelled() && ((github.ref_name == 'fit-auto-deploy' && inputs.deploy) || (github.ref_name == 'fit-auto-deploy' && needs.production-ember-build.outputs.skip_prod_deploy == 'true' )) 
+    if: always() && !failure() && !cancelled() && ((github.ref_name == 'fit-auto-deploy' && inputs.deploy) || (github.ref_name == 'fit-auto-deploy' && needs.production-ember-build.outputs.skip_prod_deploy == 'false' )) 
     runs-on: ubuntu-latest
     environment: 
       name: prod
