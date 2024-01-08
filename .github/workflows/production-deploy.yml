@@ -53,7 +53,7 @@ jobs:
     env:
       JSON: ${{ toJSON(needs) }}
     steps:
-      - run: echo "deploying" && exit 1
+      - run: echo "deploying" && exit 0
       - name: Checkout
         uses: actions/checkout@v4
         with:
