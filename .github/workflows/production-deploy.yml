@@ -63,6 +63,7 @@ jobs:
         with:
           escape_json: false
           quotepath: false
+          base_sha: 3c96915c03734fff3b9c417d368bed8cd28a8c6d
           files_yaml: |
             spec:
               - '.github/**'
