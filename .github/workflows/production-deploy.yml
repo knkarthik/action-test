@@ -143,7 +143,7 @@ jobs:
   # doesn't deploy if only test failed (auto)
   # deploy if only test failed (manual)
     needs: [production-ember-build]
-    if: always() && !failure() && !cancelled() && ((github.ref_name == 'fit-auto-deploy' && inputs.deploy) || (github.ref_name == 'fit-auto-deploy' && github.event_name == 'push')) 
+    if: always() && !failure() && !cancelled() && ((github.ref_name == 'fit-auto-deploy' && inputs.deploy) || (github.ref_name == 'fit-auto-deploy' && needs.production-ember-build.outputs.skip_prod_deploy == 'true' )) 
     runs-on: ubuntu-latest
     environment: 
       name: prod
@@ -154,7 +154,7 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.SECRET }}
       JSON: ${{ toJSON(needs) }}
-      SKIP_PROD_DEPLOY: ${{ github.event_name == 'push' && needs.production-ember-build.outputs.skip_prod_deploy == 'true' }}
+      SKIP_PROD_DEPLOY: ${{ needs.production-ember-build.outputs.skip_prod_deploy == 'true' }}
     steps:
       - name: skip prod deploy
         if: ${{ env.SKIP_PROD_DEPLOY == 'true' }}
