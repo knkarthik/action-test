@@ -61,8 +61,8 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@a0585ff9904b77d046192a7846e59783d6ea287b #v37
         with:
-          escape_json: false
-          quotepath: false
+          # escape_json: false
+          # quotepath: false
           base_sha: 3c96915c03734fff3b9c417d368bed8cd28a8c6d
           files_yaml: |
             spec:
