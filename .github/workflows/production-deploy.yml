@@ -34,7 +34,7 @@ jobs:
 
   production-ember-build:
     needs: [build-and-test]
-    if: always() && !failure() && !cancelled() && (github.ref_name == 'fit-auto-deploy' && inputs.deploy) || (github.ref_name == 'fit-auto-deploy' && github.event_name == 'push')
+    if: always() && !failure() && !cancelled() && ((github.ref_name == 'fit-auto-deploy' && github.event.inputs.deploy == 'true') || (github.ref_name == 'fit-auto-deploy' && github.event_name == 'push')) 
     # if: ${{ github.ref_name == 'fit-auto-deploy' && github.event_name == 'push' || github.ref_name == 'fit-auto-deploy' && github.event.inputs.deploy == 'true' }}
     # if: ${{ contains(needs.*.result, 'success') || (always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') && github.event.inputs.deploy == 'true') }}
     # if: ${{ always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') || github.event.inputs.deploy == 'true' }}
