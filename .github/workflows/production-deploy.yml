@@ -21,7 +21,12 @@ jobs:
     uses: ./.github/workflows/build-and-test.yml
     with:
       concurrency_key: ${{ github.run_id }}
-
+  tests-failed:
+   needs: [build-and-test]
+   if: ${{ failure() && needs.build-and-test.result == 'failure' }}
+   runs-on: ubuntu
+   steps:
+     - run: echo "tests failed"
   # build-base:
   #   # if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'fit-auto-deploy' }}
   #   if: ${{ github.ref_name == 'fit-auto-deploy' && github.event_name == 'push' || github.ref_name == 'fit-auto-deploy' && github.event.inputs.deploy == 'true' }}
