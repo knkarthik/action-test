@@ -3,7 +3,7 @@ name: Production Deploy
 on:
   push:
     branches:
-      - "test-skip"
+      - "fit-auto-deploy"
 
   workflow_dispatch: 
     inputs:
@@ -16,25 +16,25 @@ on:
 jobs:
   
   build-and-test:
-    if: ${{ github.ref_name == 'test-skip' && github.event_name == 'push'}}
+    if: ${{ github.ref_name == 'fit-auto-deploy' && github.event_name == 'push'}}
     secrets: inherit
     uses: ./.github/workflows/build-and-test.yml
     with:
       concurrency_key: ${{ github.run_id }}
 
-  build-base:
-    # if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'test-skip' }}
-    if: ${{ github.ref_name == 'test-skip' && github.event_name == 'push' || github.ref_name == 'test-skip' && github.event.inputs.deploy == 'true' }}
-    runs-on: ubuntu-latest
-    concurrency: 
-     group: production-build-base-${{ github.run_id }}
-     cancel-in-progress: false
-    steps:
-      - run: echo '${{ toJSON(github) }}' && sleep 1
+  # build-base:
+  #   # if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'fit-auto-deploy' }}
+  #   if: ${{ github.ref_name == 'fit-auto-deploy' && github.event_name == 'push' || github.ref_name == 'fit-auto-deploy' && github.event.inputs.deploy == 'true' }}
+  #   runs-on: ubuntu-latest
+  #   concurrency: 
+  #    group: production-build-base-${{ github.run_id }}
+  #    cancel-in-progress: false
+  #   steps:
+  #     - run: echo '${{ toJSON(github) }}' && sleep 1
 
   production-ember-build:
-    needs: [build-base]
-    if: ${{ github.ref_name == 'test-skip' && github.event_name == 'push' || github.ref_name == 'test-skip' && github.event.inputs.deploy == 'true' }}
+    needs: [build-and-test]
+    if: ${{ github.ref_name == 'fit-auto-deploy' && github.event_name == 'push' || github.ref_name == 'fit-auto-deploy' && github.event.inputs.deploy == 'true' }}
     # if: ${{ contains(needs.*.result, 'success') || (always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') && github.event.inputs.deploy == 'true') }}
     # if: ${{ always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') || github.event.inputs.deploy == 'true' }}
     environment: 
@@ -135,12 +135,12 @@ jobs:
   # doesn't deploy if test+ember failed (auto/manual)
   # doesn't deploy if only test failed (auto)
   # deploy if only test failed (manual)
-    needs: [build-and-test,build-base,production-ember-build]
+    needs: [production-ember-build]
     # if: ${{ always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') && !contains(needs.*.result, 'skipped')  || github.event.inputs.deploy == 'true' }}
-    if: >-
-        ${{ always() && 
-        (github.ref_name == 'test-skip' && needs.build-and-test.result == 'success' && needs.build-base.result == 'success' && needs.production-ember-build.result == 'success') ||
-        (github.ref_name == 'test-skip' && needs.build-base.result == 'success' && needs.production-ember-build.result == 'success') && github.event.inputs.deploy == 'true' }}
+    # if: >-
+    #     ${{ always() && 
+    #     (github.ref_name == 'fit-auto-deploy' && needs.build-and-test.result == 'success' && needs.build-base.result == 'success' && needs.production-ember-build.result == 'success') ||
+    #     (github.ref_name == 'fit-auto-deploy' && needs.build-base.result == 'success' && needs.production-ember-build.result == 'success') && github.event.inputs.deploy == 'true' }}
     runs-on: ubuntu-latest
     environment: 
       name: prod
@@ -151,7 +151,7 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.SECRET }}
       JSON: ${{ toJSON(needs) }}
-      SKIP_PROD_DEPLOY: ${{ github.ref_name != 'test-skip' || github.event_name == 'push' && needs.production-ember-build.outputs.skip_prod_deploy == 'true' }}
+      SKIP_PROD_DEPLOY: ${{ github.ref_name != 'fit-auto-deploy' || github.event_name == 'push' && needs.production-ember-build.outputs.skip_prod_deploy == 'true' }}
     steps:
       - name: skip prod deploy
         if: ${{ env.SKIP_PROD_DEPLOY == 'true' }}
