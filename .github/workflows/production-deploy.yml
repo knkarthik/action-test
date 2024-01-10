@@ -52,6 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       JSON: ${{ toJSON(needs) }}
+      gh: ${{ toJSON(github) }}
     steps:
       - run: echo "deploying" && exit 0
       - name: Checkout
