@@ -33,14 +33,33 @@ jobs:
         env:
           JSON: ${{ toJSON(github) }}
         run: echo $JSON && echo "SHOULD_BUILD_CI_IMAGE=false" >> GITHUB_OUTPUT && exit ${{ vars.EXIT_CODE }}
-  test:
+  rspec:
     runs-on: ubuntu-latest
     needs: ['build-base']
     strategy:
       matrix:
         version: [10, 12]
     steps:
-      - run: echo "running test ${{ matrix.version }}"
+      - run: echo "running test ${{ matrix.version }}" && exit $((RANDOM % 2))
+  acceptance:
+    runs-on: ubuntu-latest
+    needs: ['build-base']
+    strategy:
+      matrix:
+        version: [10, 12]
+    steps:
+      - run: echo "running test ${{ matrix.version }}" && exit $((RANDOM % 2))
+  cache-runtime:
+    runs-on: ubuntu-latest
+    needs: ['rspec', 'acceptance']
+    if: ${{ !cancelled() }}
+    steps:
+      - name: 'All jobs passed'
+        if: ${{ contains(needs.*.result, 'success') }}
+        run: echo "running test ${{ matrix.version }}"
+      - name: 'failed jobs found'
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: echo ${{ toJSON(needs) }}
       # - name: Checkout
       #   uses: actions/checkout@v4
       #   with:
