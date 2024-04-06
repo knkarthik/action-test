@@ -33,7 +33,14 @@ jobs:
         env:
           JSON: ${{ toJSON(github) }}
         run: echo $JSON && echo "SHOULD_BUILD_CI_IMAGE=false" >> GITHUB_OUTPUT && exit ${{ vars.EXIT_CODE }}
-      
+  test:
+    runs-on: ubuntu-latest
+    needs: ['build-base']
+    strategy:
+      matrix:
+        version: [10, 12]
+    steps:
+      - run: echo "running test ${{ matrix.version }}"
       # - name: Checkout
       #   uses: actions/checkout@v4
       #   with:
