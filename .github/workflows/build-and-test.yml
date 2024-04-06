@@ -57,7 +57,7 @@ jobs:
       needs_json: ${{ toJSON(needs) }}
     steps:
       - name: 'All jobs passed'
-        if: ${{ contains(needs.*.result, 'success') }}
+        if: ${{ contains(needs.rspec.result, 'success') && contains(needs.acceptance.result, 'success') }}
         run: echo "running test ${{ matrix.version }}"
       - name: 'failed jobs found'
         if: ${{ contains(needs.*.result, 'failure') }}
