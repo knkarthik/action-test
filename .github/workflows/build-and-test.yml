@@ -59,7 +59,7 @@ jobs:
         run: echo "running test ${{ matrix.version }}"
       - name: 'failed jobs found'
         if: ${{ contains(needs.*.result, 'failure') }}
-        run: echo ${{ toJSON(needs) }}
+        run: echo "needs is set to ${{ needs }}"
       # - name: Checkout
       #   uses: actions/checkout@v4
       #   with:
