@@ -24,7 +24,7 @@ jobs:
   tests-failed:
    needs: [build-and-test]
    if: ${{ failure() && needs.build-and-test.result == 'failure' }}
-   runs-on: ubuntu
+   runs-on: ubuntu-latest
    steps:
      - run: echo "tests failed"
   # build-base:
