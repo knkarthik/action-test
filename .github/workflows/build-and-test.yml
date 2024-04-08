@@ -55,7 +55,7 @@ jobs:
           cat what
           exit_code=$?
           if [[ $exit_code -ne 0 ]];then
-            echo "re-run"
+            echo "re-run" && failnow
             exit_code=$?
           fi
           exit $exit_code
