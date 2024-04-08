@@ -50,8 +50,8 @@ jobs:
     steps:
       - name: run acceptance
         id: run-acceptance
-        shell: bash {0}
-        run: echo "running test ${{ matrix.version }}" && cat what && echo "this"
+        shell: bash -l {0}
+        run: cat what; echo "passed"
       - name: re-run acceptance
         if: failure()
         env:
