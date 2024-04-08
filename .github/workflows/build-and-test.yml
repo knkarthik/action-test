@@ -50,9 +50,9 @@ jobs:
     steps:
       - name: run acceptance
         id: run-acceptance
-        run: echo "running test ${{ matrix.version }}" && exit $((RANDOM % 2))
+        run: echo "running test ${{ matrix.version }}" && exit 1
       - name: re-run acceptance
-        if: steps.run-acceptance.conclusion == 'failure'
+        if: steps.run-acceptance.outcome == 'failure'
         env:
           steps_json: ${{ toJSON(steps) }}
         run: echo "re-running test ${{ matrix.version }}"
