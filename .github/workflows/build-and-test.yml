@@ -48,7 +48,8 @@ jobs:
         run: echo "success" && exit 0
   brakeman:
     needs: [build-ci, build-demo]
-    if: ${{ always() && !cancelled() }}
+    if: success() || failure()
+    # if: ${{ always() && !cancelled() }}
     env:
       JSON: ${{ toJSON(needs) }}
     runs-on: ubuntu-latest
