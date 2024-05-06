@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: echo
-        run: echo "success" && exit 0
+        run: echo "success" && exit 1
   build-demo:
     needs: [build-base, build-ci]
     runs-on: ubuntu-latest
