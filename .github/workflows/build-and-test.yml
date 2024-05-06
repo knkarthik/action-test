@@ -54,8 +54,15 @@ jobs:
       JSON: ${{ toJSON(needs) }}
     runs-on: ubuntu-latest
     steps:
-      - name: echo
+      - name: echo needs
         run: echo $JSON
+      - name: echo test
+        run: |
+          echo "failure ${{ contains(needs.*.result, 'failure') }} "
+          echo "skipped ${{ contains(needs.*.result, 'skipped') }} "
+          echo "success ${{ contains(needs.*.result, 'success') }} "
+          echo "cancelled ${{ contains(needs.*.result, 'cancelled') }} "
+        
   # rubocop:
   #   needs: [build-ci]
   #   runs-on: ubuntu-latest
