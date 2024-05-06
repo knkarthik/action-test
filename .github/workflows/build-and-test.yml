@@ -35,7 +35,7 @@ jobs:
       
   build-ci:
     needs: build-base
-    if: ${{ inputs.run_ci == 'true' }}
+    if: ${{ inputs.run_ci }}
     runs-on: ubuntu-latest
     steps:
       - name: echo
