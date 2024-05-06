@@ -16,7 +16,7 @@ on:
         default: qa
   workflow_dispatch:  
     inputs:
-      percy_desktop: 
+      run_ci: 
         required: false
         type: boolean
 env:
@@ -32,48 +32,28 @@ jobs:
         env:
           JSON: ${{ toJSON(github) }}
         run: echo $JSON && echo "SHOULD_BUILD_CI_IMAGE=false" >> GITHUB_OUTPUT
-      # - name: Checkout
-      #   uses: actions/checkout@v4
-      #   with:
-      #     fetch-depth: 2
-      # - name: Get changed files
-      #   id: changed-files
-      #   uses: tj-actions/changed-files@a0585ff9904b77d046192a7846e59783d6ea287b #v37
-      #   with:
-      #     files: |
-      #       Gemfile.lock
-      #       app/assets/**
-      #       direct/**
-      # - name: echo
-      #   run: |
-      #     any_changed=${{ steps.changed-files.outputs.any_modified }}
-      #     echo "Modified files are ${{ steps.changed-files.outputs.all_modified_files }}"
-      #     echo $any_changed
-      #     git log --oneline -n 10
-      #     git diff --name-only 8a5cfed $GITHUB_SHA
-      #     echo "SHOULD_BUILD_CI_IMAGE=false" >> GITHUB_OUTPUT
+      
   build-ci:
     needs: build-base
-    environment: prod
-    # if: ${{ needs.build-base.outputs.SHOULD_BUILD_CI_IMAGE == 'true' }}
+    if: ${{ inputs.run_ci == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: echo
-        run: echo "success"
+        run: echo "success" && exit 0
   build-demo:
     needs: [build-base, build-ci]
-    if: always() && !failure() && !cancelled() && github.event.inputs.percy_desktop == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: echo
-        run: echo "success" && echo "finalize=true" >> GITHUB_OUTPUT
+        run: echo "success" && exit 0
   brakeman:
-    needs: [build-base, build-demo]
-    if: always() && !failure() && !cancelled() && github.event.inputs.percy_desktop == 'true'
+    needs: [build-ci, build-demo]
+    env:
+      JSON: ${{ toJSON(needs) }}
     runs-on: ubuntu-latest
     steps:
       - name: echo
-        run: echo "success"
+        run: echo $JSON
   # rubocop:
   #   needs: [build-ci]
   #   runs-on: ubuntu-latest
