@@ -10,15 +10,16 @@ on:
         type: string
   schedule:
     - cron: "*/5 * * * *"
+env:
+  env_name: ${{ github.event_name == 'schedule' && 'all' || '')
 
 jobs:
   scaleup-qa:
     runs-on: ubuntu
-    if: ${{ inputs.env_name != '' || github.event_name == 'schedule' }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
       - name: Scale
         uses: ./.github/actions/scale
         with:
-          env_name: ${{ inputs.env_name }}
+          env_name: ${{ env.env_name }}
