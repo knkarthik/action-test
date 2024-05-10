@@ -11,7 +11,7 @@ on:
   schedule:
     - cron: "*/6 * * * *"
 env:
-  env_name: ${{ github.event_name == 'schedule' && 'all' || '')
+  env_name: ${{ github.event_name == 'schedule' && 'all' || '' }}
 
 jobs:
   scaleup-qa:
