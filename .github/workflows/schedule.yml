@@ -9,7 +9,7 @@ on:
         required: true
         type: string
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "*/6 * * * *"
 env:
   env_name: ${{ github.event_name == 'schedule' && 'all' || '')
 
