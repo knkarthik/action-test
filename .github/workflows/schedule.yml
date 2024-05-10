@@ -9,12 +9,12 @@ on:
         required: true
         type: string
   schedule:
-    - cron: "5 * * * *"
+    - cron: "*/5 * * * *"
 
 jobs:
   scaleup-qa:
     runs-on: ubuntu
-    if: ${{ inputs.env_name != '' }}
+    if: ${{ inputs.env_name != '' || github.event_name == 'schedule' }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
