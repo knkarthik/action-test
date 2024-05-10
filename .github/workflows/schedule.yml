@@ -1,0 +1,24 @@
+name: Schedule
+run-name: test
+
+on:
+  workflow_dispatch:
+    inputs:
+      env_name:
+        description: 'env'
+        required: true
+        type: string
+  schedule:
+    - cron: "5 * * * *"
+
+jobs:
+  scaleup-qa:
+    runs-on: ubuntu
+    if: ${{ inputs.env_name != '' }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Scale
+        uses: ./.github/actions/scale
+        with:
+          env_name: ${{ inputs.env_name }}

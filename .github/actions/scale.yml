@@ -1,0 +1,16 @@
+name: "Scale QA Environment"
+description: "A composite action to scale an ephemeral QA environment"
+
+inputs:
+  env_name:
+    description: "name"
+    required: false
+    default: all
+
+runs:
+  using: "composite"
+  steps:
+    - name: echo
+      shell: bash
+      run: echo "${{ inputs.env_name }}"
+      
