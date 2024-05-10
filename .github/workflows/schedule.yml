@@ -22,4 +22,4 @@ jobs:
       - name: Scale
         uses: ./.github/actions/scale
         with:
-          env_name: ${{ env.env_name }}
+          env_name: ${{ inputs.env_name }}
