@@ -9,13 +9,14 @@ on:
         required: true
         type: string
   schedule:
-    - cron: "*/7 * * * *"
+    - cron: "*/6 * * * *"
 # env:
 #   env_name: ${{ github.event_name == 'schedule' && 'all' || '' }}
 
 jobs:
   scaleup-qa:
-    runs-on: ubuntu
+    runs-on: ubuntu:latest
+    if: ${{ inputs.env_name != '' }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -23,3 +24,12 @@ jobs:
         uses: ./.github/actions/scale
         with:
           env_name: ${{ inputs.env_name }}
+  scaleup-qa-2:
+      runs-on: ubuntu:latest
+      steps:
+        - name: Checkout repo
+          uses: actions/checkout@v4
+        - name: Scale
+          uses: ./.github/actions/scale
+          with:
+            env_name: ${{ inputs.env_name }}
