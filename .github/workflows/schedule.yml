@@ -25,7 +25,7 @@ jobs:
         with:
           env_name: ${{ inputs.env_name }}
   scaleup-qa-2:
-      runs-on: ubuntu:latest
+      runs-on: ubuntu-latest
       steps:
         - name: Checkout repo
           uses: actions/checkout@v4
