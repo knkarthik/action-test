@@ -48,10 +48,9 @@ jobs:
       cancel-in-progress: false
     runs-on: ubuntu-24.04
     steps:
-      - name: Dump GitHub context
-        id: github_context_step
+      - name: Dump needs context
         env:
-          JSON: ${{ toJSON(github) }}
+          JSON: ${{ toJSON(needs) }}
         run: echo $JSON
       - run: echo "build image" && sleep 5
 
