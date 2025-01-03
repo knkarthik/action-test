@@ -30,7 +30,15 @@ jobs:
       cancel-in-progress: false
     runs-on: ubuntu-24.04
     steps:
+    - name: Dump GitHub context
+      id: github_context_step
+        env:
+          JSON: ${{ toJSON(github) }}
+        run: echo $JSON
       - run: echo "deploying" && sleep 5
+    outputs:
+      skip_prod_deploy: 'false'
+      ember_build_run: 'true'
 
   build-prod-image:
     if: always() && !failure() && !cancelled() && github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
@@ -40,6 +48,11 @@ jobs:
       cancel-in-progress: false
     runs-on: ubuntu-24.04
     steps:
+      - name: Dump GitHub context
+        id: github_context_step
+        env:
+          JSON: ${{ toJSON(github) }}
+        run: echo $JSON
       - run: echo "build image" && sleep 5
 
   production-deploy:
@@ -53,6 +66,7 @@ jobs:
       - name: prod deploy
         id: prod-deploy
         run: echo "URL=prod" >> $GITHUB_OUTPUT
+
 
   deploy-eks:
     if: always() && !failure() && !cancelled() && github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
