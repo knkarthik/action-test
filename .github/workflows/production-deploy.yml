@@ -2,9 +2,9 @@ name: Production Deploy
 
 
 on:
-  # push:
-  #   branches:
-  #     - "main"
+  push:
+    branches:
+      - "main"
 
   workflow_dispatch: 
     inputs:
@@ -21,33 +21,31 @@ jobs:
     with:
       concurrency_key: ${{ github.run_id }}
 
-  build-base:
-    # if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'main' }}
-    runs-on: ubuntu-latest
-    concurrency: 
-     group: production-build-base-${{ github.run_id }}
-     cancel-in-progress: false
-    steps:
-      - run: echo '${{ toJSON(github) }}'
 
   production-ember-build:
-    # if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'main' }}
-    needs: [build-base]
+    if: always() && !failure() && !cancelled() && github.ref_name == 'main' && (inputs.deploy || github.event_name == 'push' )
+    needs: [build-and-test]
     concurrency: 
       group: production-ember-build-${{ github.run_id }}
       cancel-in-progress: false
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - run: echo "deploying" && sleep 5
 
-  production-deploy:
-    # if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' && github.ref_name == 'main' }}
-    
+  build-prod-image:
+    if: always() && !failure() && !cancelled() && github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
     needs: [production-ember-build]
-    runs-on: ubuntu-latest
-    environment: 
-      name: prod
-      url: "${{ format('{0}{1}{2}', 'https://', steps.prod-deploy.outputs.URL, '.com') }}"
+    concurrency: 
+      group: build-prod-image-${{ github.run_id }}
+      cancel-in-progress: false
+    runs-on: ubuntu-24.04
+    steps:
+      - run: echo "build image" && sleep 5
+
+  production-deploy:
+    if: always() && !failure() && !cancelled() && github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
+    needs: [production-ember-build]
+    runs-on: ubuntu-24.04
     concurrency: 
       group: production-deploy
       cancel-in-progress: false
@@ -55,3 +53,25 @@ jobs:
       - name: prod deploy
         id: prod-deploy
         run: echo "URL=prod" >> $GITHUB_OUTPUT
+
+  deploy-eks:
+    if: always() && !failure() && !cancelled() && github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
+    needs: [build-prod-image, production-deploy]
+    runs-on: ubuntu-24.04
+    concurrency: 
+      group: production-deploy-eks
+      cancel-in-progress: false
+    steps:
+      - name: eks deploy
+        run: echo "eks deploy" && sleep 1
+
+  invalidate-cache:
+    if: always() && !failure() && !cancelled() && github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
+    needs: [production-deploy,deploy-eks]
+    runs-on: ubuntu-24.04
+    concurrency: 
+      group: production-deploy-eks
+      cancel-in-progress: false
+    steps:
+      - name: eks deploy
+        run: echo "eks deploy" && sleep 1
