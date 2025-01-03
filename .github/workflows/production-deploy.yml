@@ -72,7 +72,7 @@ jobs:
 
 
   deploy-eks:
-    if: success() && github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
+    # if: success() && github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
     needs: [build-prod-image, production-deploy]
     runs-on: ubuntu-24.04
     concurrency: 
@@ -87,7 +87,7 @@ jobs:
         run: echo "eks deploy" && sleep 1
 
   invalidate-cache:
-    if: success() && github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
+    # if: success() && github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
     needs: [production-deploy,deploy-eks]
     runs-on: ubuntu-24.04
     concurrency: 
