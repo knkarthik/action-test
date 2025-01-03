@@ -32,10 +32,10 @@ jobs:
     steps:
     - name: Dump GitHub context
       id: github_context_step
-        env:
-          JSON: ${{ toJSON(github) }}
-        run: echo $JSON
-      - run: echo "deploying" && sleep 5
+      env:
+        JSON: ${{ toJSON(github) }}
+      run: echo $JSON
+    - run: echo "deploying" && sleep 5
     outputs:
       skip_prod_deploy: 'false'
       ember_build_run: 'true'
