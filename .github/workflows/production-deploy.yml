@@ -152,7 +152,7 @@ jobs:
                 },
                 {
                   type: "mrkdwn",
-                  text: `<${context.payload.head_commit.url}|${context.payload.head_commit.message.split('\n')[0]}>`
+                  text: `<${context.payload.head_commit?.url || '#'}|${context.payload.head_commit?.message?.split('\n')[0] || 'Manual deploy'}>`
                 }
               ]
             };
