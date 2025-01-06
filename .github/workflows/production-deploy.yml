@@ -112,6 +112,7 @@ jobs:
               run_id: context.runId,
               per_page: 50,
             });
+            console.log(context.payload)
             const failedJobs = data.jobs.filter(job => job.conclusion === 'failure');
             const failedJobLinks = failedJobs.map(job => `<${job.html_url}|${job.name}>`);
             const workflowHeader = {
