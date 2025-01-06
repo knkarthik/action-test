@@ -85,7 +85,7 @@ jobs:
           JSON: ${{ toJSON(needs) }}
         run: echo $JSON
       - name: eks deploy
-        run: echo "eks deploy" && sleep 1
+        run: echo "eks deploy" && exit 1
 
   notify-on-failure:
     # if: ${{ (needs.production-deploy.result == 'success' && needs.deploy-eks.result == 'success') && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false') }}
