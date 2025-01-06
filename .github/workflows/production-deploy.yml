@@ -98,7 +98,7 @@ jobs:
           JSON: ${{ toJSON(needs) }}
         run: echo $JSON
             - name: List Failed Jobs
-      - List failed jobs
+      - name: List failed jobs
         id: list-failed-jobs
         uses: actions/github-script@v7
         env:
