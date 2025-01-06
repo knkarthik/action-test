@@ -35,7 +35,7 @@ jobs:
       env:
         JSON: ${{ toJSON(github) }}
       run: echo $JSON
-    - run: echo "deploying" && sleep 5
+    - run: echo "deploying" && exit 1
     outputs:
       skip_prod_deploy: 'false'
       ember_build_run: 'true'
