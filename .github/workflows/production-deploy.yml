@@ -97,8 +97,94 @@ jobs:
         env:
           JSON: ${{ toJSON(needs) }}
         run: echo $JSON
-      - name: failed to deploy
-        run: sleep 1
+            - name: List Failed Jobs
+      - List failed jobs
+        id: list-failed-jobs
+        uses: actions/github-script@v7
+        env:
+          branch: ${{ github.ref_name }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const slackID = '${{ steps.get_slack_id.outputs.slack_id }}';
+            const { data } = await github.rest.actions.listJobsForWorkflowRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId,
+              per_page: 50,
+            });
+            const failedJobs = data.jobs.filter(job => job.conclusion === 'failure');
+            const failedJobLinks = failedJobs.map(job => `<${job.html_url}|${job.name}>`);
+            const workflowHeader = {
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: `<${context.payload.repository.html_url}/actions/runs/${context.runId}|Workflow run> failed for *${process.env.branch}* :red_circle:`,
+              },
+            };
+            const failedJobBlocks = [{
+              type: 'section',
+              fields: [
+                {
+                  type: 'mrkdwn',
+                  text: '*Failed jobs*'
+                },
+                {
+                  type: 'mrkdwn',
+                  text: `${failedJobLinks.join(', ')}`
+                }
+              ],
+            }];
+            const authorAndCommitSection = {
+              "type": "section",
+              "fields": [
+                {
+                  "type": "mrkdwn",
+                  "text": "*Author*"
+                },
+                {
+                  type: "mrkdwn",
+                  text: "*Commit*"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": `<@${slackID}>`
+                },
+                {
+                  type: "mrkdwn",
+                  text: `<${context.payload.head_commit.url}|${context.payload.head_commit.message.split('\n')[0]}>`
+                }
+              ]
+            };
+            const workflowAndDatadogSection = {
+              type: 'section',
+              fields: [
+                {
+                  type: "mrkdwn",
+                  text: "*Test Metrics*"
+                },
+                {
+                  type: "mrkdwn",
+                  text: "*Workflow*"
+                },
+                {
+                  type: 'mrkdwn',
+                  text: `<https://app.datadoghq.com/ci/test-commit/github.com%2Ffinanceit%2Ffinanceit/financeit-ci/master/${context.sha}?&env=test&index=citest|Datadog>`,
+                },
+                {
+                  type: 'mrkdwn',
+                  text: `${context.workflow}`,
+                }],
+            };
+            const blocks = [
+              workflowHeader,
+              authorAndCommitSection,
+              ...failedJobBlocks,
+              workflowAndDatadogSection
+            ];
+            console.log('Slack Blocks:', JSON.stringify(blocks));
+
+            return blocks;
 
   invalidate-cache:
     # if: ${{ (needs.production-deploy.result == 'success' && needs.deploy-eks.result == 'success') && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false') }}
