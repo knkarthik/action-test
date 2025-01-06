@@ -31,7 +31,7 @@ jobs:
         id: github_context_step
         env:
           JSON: ${{ toJSON(github) }}
-        run: echo $JSON && echo "SHOULD_BUILD_CI_IMAGE=false" >> GITHUB_OUTPUT && exit 0
+        run: echo $JSON && echo "SHOULD_BUILD_CI_IMAGE=false" >> GITHUB_OUTPUT && exit 1
       # - name: Checkout
       #   uses: actions/checkout@v4
       #   with:
