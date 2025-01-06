@@ -72,8 +72,8 @@ jobs:
 
 
   deploy-eks:
-    # if: success() && github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
-    if: ${{ (needs.build-prod-image.result == 'success' && needs.production-deploy.result == 'success') && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false') }}
+    if: always() && !failure() && !cancelled() && github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
+    # if: ${{ (needs.build-prod-image.result == 'success' && needs.production-deploy.result == 'success') && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false') }}
     needs: [build-prod-image, production-deploy]
     runs-on: ubuntu-24.04
     concurrency: 
@@ -87,8 +87,22 @@ jobs:
       - name: eks deploy
         run: echo "eks deploy" && sleep 1
 
+  notify-on-failure:
+    # if: ${{ (needs.production-deploy.result == 'success' && needs.deploy-eks.result == 'success') && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false') }}
+    if: failure()
+    needs: [deploy-eks]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Dump needs context
+        env:
+          JSON: ${{ toJSON(needs) }}
+        run: echo $JSON
+      - name: failed to deploy
+        run: sleep 1
+
   invalidate-cache:
-    if: ${{ (needs.production-deploy.result == 'success' && needs.deploy-eks.result == 'success') && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false') }}
+    # if: ${{ (needs.production-deploy.result == 'success' && needs.deploy-eks.result == 'success') && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false') }}
+    if: always() && !failure() && !cancelled() && github.ref_name == 'main' && needs.production-ember-build.outputs.ember_build_run == 'true' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
     needs: [production-deploy,deploy-eks]
     runs-on: ubuntu-24.04
     concurrency: 
@@ -101,3 +115,4 @@ jobs:
         run: echo $JSON
       - name: eks deploy
         run: echo "eks deploy" && sleep 1
+  
