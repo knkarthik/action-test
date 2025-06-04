@@ -28,7 +28,7 @@ jobs:
     concurrency: 
       group: production-ember-build-${{ github.run_id }}
       cancel-in-progress: false
-    runs-on: ubuntu-24.04
+    runs-on: pending
     steps:
     - name: Dump GitHub context
       id: github_context_step
