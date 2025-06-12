@@ -23,7 +23,8 @@ jobs:
 
 
   production-ember-build:
-    if: always() && !failure() && !cancelled() && github.ref_name == 'main' && (inputs.deploy || github.event_name == 'push' )
+    # if: always() && !failure() && !cancelled() && github.ref_name == 'main' && (inputs.deploy || github.event_name == 'push' )
+    if: ${{ !cancelled() }}
     needs: [build-and-test]
     concurrency: 
       group: production-ember-build-${{ github.run_id }}
