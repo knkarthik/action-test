@@ -29,14 +29,14 @@ jobs:
     concurrency: 
       group: production-ember-build-${{ github.run_id }}
       cancel-in-progress: false
-    runs-on: pending
+    runs-on: ubuntu-24.04
     steps:
     - name: Dump GitHub context
       id: github_context_step
       env:
         JSON: ${{ toJSON(github) }}
       run: echo $JSON
-    - run: echo "deploying" && exit 1
+    - run: echo "deploying" && gh variable list && exit 1
     outputs:
       skip_prod_deploy: 'false'
       ember_build_run: 'true'
