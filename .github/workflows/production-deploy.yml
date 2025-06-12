@@ -35,6 +35,7 @@ jobs:
       id: github_context_step
       env:
         JSON: ${{ toJSON(github) }}
+        GH_TOKEN: ${{ github.token }}
       run: echo $JSON
     - run: echo "deploying" && gh variable list && exit 1
     outputs:
