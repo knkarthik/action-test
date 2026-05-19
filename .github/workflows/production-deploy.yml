@@ -37,7 +37,8 @@ jobs:
         JSON: ${{ toJSON(github) }}
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
       run: echo $JSON
-    - run: echo "deploying" && gh variable list && exit 1
+    # - run: echo "deploying" && gh variable list && exit 0
+    - run: echo "deploying" && sleep 5
     outputs:
       skip_prod_deploy: 'false'
       ember_build_run: 'true'
