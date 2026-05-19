@@ -77,7 +77,7 @@ jobs:
   deploy-eks:
     if: always() && !failure() && !cancelled() && github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
     # if: ${{ (needs.build-prod-image.result == 'success' && needs.production-deploy.result == 'success') && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false') }}
-    needs: [build-prod-image, production-ember-build]
+    needs: [build-and-test, production-ember-build,build-prod-image]
     runs-on: ubuntu-24.04
     concurrency: 
       group: production-deploy-eks
