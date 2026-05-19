@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: echo
-        run: echo "success" && sleep 5
+        run: echo "success" && sleep 5 && exit 1
   build-demo:
     needs: [build-base, build-ci]
     if: always() && !failure() && !cancelled() && github.event.inputs.percy_desktop == 'true'
