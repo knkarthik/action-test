@@ -57,27 +57,27 @@ jobs:
         run: echo $JSON
       - run: echo "build image" && exit 1
 
-  production-deploy:
-    if: always() && !failure() && !cancelled() && github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
-    needs: [production-ember-build]
-    runs-on: ubuntu-24.04
-    concurrency: 
-      group: production-deploy
-      cancel-in-progress: false
-    steps:
-      - name: Dump needs context
-        env:
-          JSON: ${{ toJSON(needs) }}
-        run: echo $JSON
-      - name: prod deploy
-        id: prod-deploy
-        run: echo "URL=prod" >> $GITHUB_OUTPUT
+  # production-deploy:
+  #   if: always() && !failure() && !cancelled() && github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
+  #   needs: [production-ember-build]
+  #   runs-on: ubuntu-24.04
+  #   concurrency: 
+  #     group: production-deploy
+  #     cancel-in-progress: false
+  #   steps:
+  #     - name: Dump needs context
+  #       env:
+  #         JSON: ${{ toJSON(needs) }}
+  #       run: echo $JSON
+  #     - name: prod deploy
+  #       id: prod-deploy
+  #       run: echo "URL=prod" >> $GITHUB_OUTPUT
 
 
   deploy-eks:
     if: always() && !failure() && !cancelled() && github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
     # if: ${{ (needs.build-prod-image.result == 'success' && needs.production-deploy.result == 'success') && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false') }}
-    needs: [build-prod-image, production-deploy]
+    needs: [build-prod-image, production-ember-build]
     runs-on: ubuntu-24.04
     concurrency: 
       group: production-deploy-eks
@@ -192,7 +192,7 @@ jobs:
   invalidate-cache:
     # if: ${{ (needs.production-deploy.result == 'success' && needs.deploy-eks.result == 'success') && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false') }}
     if: always() && !failure() && !cancelled() && github.ref_name == 'main' && needs.production-ember-build.outputs.ember_build_run == 'true' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
-    needs: [production-deploy,deploy-eks]
+    needs: [production-ember-build, deploy-eks]
     runs-on: ubuntu-24.04
     concurrency: 
       group: production-deploy-eks
