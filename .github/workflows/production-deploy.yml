@@ -44,7 +44,7 @@ jobs:
       ember_build_run: 'false'
 
   build-prod-image:
-    if: always() && !failure() && !cancelled() && github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
+    if: github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
     needs: [production-ember-build]
     concurrency: 
       group: build-prod-image-${{ github.run_id }}
