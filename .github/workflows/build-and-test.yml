@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: echo
-        run: echo "success"
+        run: echo "success" && sleep 5
   build-demo:
     needs: [build-base, build-ci]
     if: always() && !failure() && !cancelled() && github.event.inputs.percy_desktop == 'true'
@@ -73,7 +73,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: echo
-        run: echo "success"
+        run: echo "success" && sleep 10
   # rubocop:
   #   needs: [build-ci]
   #   runs-on: ubuntu-latest

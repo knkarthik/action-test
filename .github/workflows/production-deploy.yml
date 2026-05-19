@@ -55,7 +55,7 @@ jobs:
         env:
           JSON: ${{ toJSON(needs) }}
         run: echo $JSON
-      - run: echo "build image" && exit 1
+      - run: echo "build image" && exit 0
 
   # production-deploy:
   #   if: always() && !failure() && !cancelled() && github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
