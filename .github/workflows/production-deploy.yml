@@ -41,7 +41,7 @@ jobs:
     - run: echo "deploying" && sleep 5
     outputs:
       skip_prod_deploy: 'false'
-      ember_build_run: 'run'
+      ember_build_run: 'true'
 
   build-prod-image:
     if: always() && !failure() && !cancelled() && github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
