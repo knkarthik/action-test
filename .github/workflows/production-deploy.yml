@@ -40,8 +40,8 @@ jobs:
     # - run: echo "deploying" && gh variable list && exit 0
     - run: echo "deploying" && sleep 5
     outputs:
-      skip_prod_deploy: 'false'
-      ember_build_run: 'true'
+      skip_prod_deploy: 'true'
+      ember_build_run: 'false'
 
   build-prod-image:
     if: github.ref_name == 'main' && (inputs.deploy || needs.production-ember-build.outputs.skip_prod_deploy == 'false')
