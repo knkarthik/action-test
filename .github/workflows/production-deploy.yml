@@ -23,7 +23,7 @@ jobs:
 
 
   production-ember-build:
-    if: github.ref_name == 'master' && (inputs.deploy || github.event_name == 'push' )
+    if: github.ref_name == 'main' && (inputs.deploy || github.event_name == 'push' )
     # if: ${{ !cancelled() }}
     # needs: [build-and-test]
     concurrency: 
