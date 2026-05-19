@@ -68,7 +68,7 @@ jobs:
       - name: echo
         run: echo "success" && echo "finalize=true" >> GITHUB_OUTPUT
   brakeman:
-    needs: [build-base, build-demo]
+    needs: [build-base, build-ci]
     if: always() && !failure() && !cancelled() && github.event.inputs.percy_desktop == 'true'
     runs-on: ubuntu-latest
     steps:
